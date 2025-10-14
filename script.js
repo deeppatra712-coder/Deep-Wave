@@ -1,108 +1,142 @@
-/* Deep Wave Pro Edition JS
- - canvas particles (bubbles/plankton)
- - reveal on scroll for cards
- - review slider (auto + nav)
- - modal for Buy buttons
- - audio toggle (touchstart + click) with fade
- - smooth nav
+/* script.js
+   Deep Wave — Viral-ready logic:
+   - preloader
+   - canvas particles
+   - referral link generator (localStorage)
+   - share buttons (FB/Twitter/WhatsApp)
+   - share/register contest (localStorage)
+   - modal buy flow + contact form handling
+   - audio toggle (touch + click) with fade
+   - reviews slider
+   - magnetic cursor + mobile gyroscope
+   Save as: my-website/script.js
 */
 
-// ---------- Canvas particles / floating bubbles ----------
+///// PRELOADER /////
+window.addEventListener('load', () => {
+  const pre = document.getElementById('preloader');
+  if (!pre) return;
+  setTimeout(() => {
+    pre.style.opacity = '0';
+    pre.style.pointerEvents = 'none';
+    pre.setAttribute('aria-hidden','true');
+  }, 700);
+});
+
+///// CANVAS PARTICLES /////
 const canvas = document.getElementById('bg-canvas');
 const ctx = canvas && canvas.getContext ? canvas.getContext('2d') : null;
-let W=0,H=0, bubbles=[];
-
-function resizeCanvas(){ if(!canvas) return; W=canvas.width=window.innerWidth; H=canvas.height=window.innerHeight; }
-window.addEventListener('resize', ()=>{ resizeCanvas(); initBubbles(); });
+let W = 0, H = 0, parts = [];
+function resizeCanvas(){
+  if(!canvas) return;
+  W = canvas.width = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+  initParticles();
+}
+window.addEventListener('resize', resizeCanvas);
 resizeCanvas();
 
 function rand(min,max){ return Math.random()*(max-min)+min; }
-
-function initBubbles(){
-  const count = Math.round(Math.max(14, Math.min(80, (window.innerWidth*window.innerHeight)/180000)));
-  bubbles = [];
+function initParticles(){
+  const count = Math.round(Math.max(18, Math.min(120, (W*H)/160000)));
+  parts = [];
   for(let i=0;i<count;i++){
-    bubbles.push({
+    parts.push({
       x: rand(0,W),
-      y: rand(H*0.2, H),
-      r: rand(0.6,3.2),
-      vx: rand(-0.2,0.2),
-      vy: rand(-0.05,-0.4),
-      alpha: rand(0.02,0.18)
+      y: rand(H*0.3, H),
+      r: rand(0.6,3.6),
+      vx: rand(-0.3,0.3),
+      vy: rand(-0.05,-0.45),
+      a: rand(0.02,0.18)
     });
   }
 }
-initBubbles();
-
-function drawBubbles(){
+function drawParticles(){
   if(!ctx) return;
   ctx.clearRect(0,0,W,H);
-  for(const b of bubbles){
-    b.x += b.vx; b.y += b.vy;
-    if(b.x < -20) b.x = W + 20;
-    if(b.x > W + 20) b.x = -20;
-    if(b.y < -40) b.y = H + 40;
-
+  for(const p of parts){
+    p.x += p.vx; p.y += p.vy;
+    if(p.x < -20) p.x = W + 20;
+    if(p.x > W + 20) p.x = -20;
+    if(p.y < -40) p.y = H + 40;
     ctx.beginPath();
-    ctx.fillStyle = rgba(0,220,255,${b.alpha});
+    ctx.fillStyle = rgba(0,220,255,${p.a});
     ctx.shadowBlur = 8; ctx.shadowColor = 'rgba(0,150,255,0.06)';
-    ctx.arc(b.x, b.y, b.r, 0, Math.PI*2);
-    ctx.fill();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI*2); ctx.fill();
   }
-  requestAnimationFrame(drawBubbles);
+  requestAnimationFrame(drawParticles);
 }
-drawBubbles();
+drawParticles();
 
-// ---------- Reveal on scroll ----------
-const revealElems = Array.from(document.querySelectorAll('.plan-card, .section-title'));
-function revealOnScroll(){
-  const trigger = window.innerHeight * 0.82;
-  revealElems.forEach((el, idx) => {
-    const r = el.getBoundingClientRect();
-    if(r.top < trigger){
-      el.style.opacity = 1;
-      el.style.transform = 'translateY(0)';
-      el.style.transitionDelay = ${idx * 80}ms;
-      el.style.transitionDuration = '600ms';
-    }
-  });
+///// REFERRAL CODE (client-side) /////
+function makeCode(len=6){
+  const chars = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
+  let s='';
+  for(let i=0;i<len;i++) s+=chars[Math.floor(Math.random()*chars.length)];
+  return s;
 }
-window.addEventListener('scroll', revealOnScroll);
-window.addEventListener('load', ()=> setTimeout(revealOnScroll, 220));
-
-// ---------- Smooth nav links ----------
-document.querySelectorAll('.nav-links a').forEach(a=>{
-  a.addEventListener('click', (e)=>{
-    e.preventDefault();
-    const t = document.querySelector(a.getAttribute('href'));
-    if(t) t.scrollIntoView({ behavior:'smooth', block:'start' });
-  });
+let ref = localStorage.getItem('dw_ref');
+if(!ref){
+  ref = makeCode(6);
+  localStorage.setItem('dw_ref', ref);
+}
+const link = ${location.origin}${location.pathname}?ref=${ref};
+const refLinkEl = document.getElementById('refLink');
+if(refLinkEl){
+  refLinkEl.href = link;
+  refLinkEl.textContent = link;
+}
+const copyBtn = document.getElementById('copyRef');
+copyBtn && copyBtn.addEventListener('click', ()=> {
+  navigator.clipboard.writeText(link).then(()=> { alert('Referral link copied!'); });
 });
 
-// ---------- Review slider ----------
-const slides = Array.from(document.querySelectorAll('.review-slide'));
-let current = 0;
-const prevBtn = document.querySelector('.rev-nav.prev');
-const nextBtn = document.querySelector('.rev-nav.next');
+///// SHARE BUTTONS (FB/TW/WA) /////
+const pageUrl = encodeURIComponent(location.href);
+const shareText = encodeURIComponent("Join Deep Wave — Ultra Pro Max. Limited launch offers! " + link);
 
-function showSlide(idx){
-  slides.forEach(s => s.classList.remove('active'));
-  slides[idx].classList.add('active');
+document.getElementById('shareFb')?.addEventListener('click', ()=>{
+  window.open(https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(link)}, '_blank');
+  registerShare();
+});
+document.getElementById('shareTw')?.addEventListener('click', ()=>{
+  window.open(https://twitter.com/intent/tweet?text=${shareText}, '_blank');
+  registerShare();
+});
+document.getElementById('shareWa')?.addEventListener('click', ()=>{
+  const wa = https://wa.me/?text=${encodeURIComponent("Join Deep Wave — Ultra Pro Max: " + link)};
+  window.open(wa, '_blank');
+  registerShare();
+});
+
+///// CONTEST: register share count (client-side) /////
+function registerShare(){
+  const key = dw_shares_${ref};
+  const cur = parseInt(localStorage.getItem(key) || '0', 10) + 1;
+  localStorage.setItem(key, cur);
+  // every 3 shares => 1 entry (example)
+  const entries = Math.floor(cur / 3);
+  alert(Thanks for sharing! You've shared ${cur} times — contest entries: ${entries});
+  // For production: POST this event to your backend to track & verify
 }
-showSlide(0);
 
-prevBtn.addEventListener('click', ()=> {
-  current = (current - 1 + slides.length) % slides.length;
-  showSlide(current);
-});
-nextBtn.addEventListener('click', ()=> {
-  current = (current + 1) % slides.length;
-  showSlide(current);
-});
-// auto-play
-setInterval(()=> { current = (current + 1) % slides.length; showSlide(current); }, 6000);
+///// CONTEST MODAL /////
+const enterContestBtn = document.getElementById('enterContest');
+const contestModal = document.getElementById('contestModal');
+const cClose = document.getElementById('cClose');
+enterContestBtn && enterContestBtn.addEventListener('click', ()=> { contestModal.style.display = 'flex'; contestModal.setAttribute('aria-hidden','false'); });
+cClose && cClose.addEventListener('click', ()=> { contestModal.style.display = 'none'; contestModal.setAttribute('aria-hidden','true'); });
 
-// ---------- Modal (Buy flow) ----------
+document.getElementById('cShareFb')?.addEventListener('click', ()=>{
+  window.open(https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(link)}, '_blank');
+  registerShare();
+});
+document.getElementById('cShareWa')?.addEventListener('click', ()=>{
+  window.open(https://wa.me/?text=${encodeURIComponent("Join Deep Wave — " + link)}, '_blank');
+  registerShare();
+});
+
+///// BUY MODAL FLOW /////
 const modal = document.getElementById('modal');
 const modalClose = document.getElementById('modal-close');
 const modalForm = document.getElementById('modal-form');
@@ -111,76 +145,73 @@ document.querySelectorAll('.buy-btn').forEach(btn=>{
   btn.addEventListener('click', (e)=>{
     e.preventDefault();
     const plan = btn.dataset.plan || 'Selected Plan';
-    mplan.value = plan;
-    modal.classList.add('show');
-    modal.setAttribute('aria-hidden','false');
+    if(mplan) mplan.value = plan;
+    if(modal){ modal.classList.add('show'); modal.setAttribute('aria-hidden','false'); }
   });
 });
-modalClose.addEventListener('click', ()=> { modal.classList.remove('show'); modal.setAttribute('aria-hidden','true'); });
-modalForm.addEventListener('submit', (e)=>{
+modalClose?.addEventListener('click', ()=> { modal.classList.remove('show'); modal.setAttribute('aria-hidden','true'); });
+modal?.addEventListener('click', (e)=> { if(e.target === modal){ modal.classList.remove('show'); modal.setAttribute('aria-hidden','true'); }});
+modalForm?.addEventListener('submit', (e)=> {
   e.preventDefault();
-  const name = modalForm.mname.value || 'User';
-  alert(Thanks ${name}! We got your request for: ${modalForm.mplan.value}. Deep Wave will call you soon.);
-  modal.classList.remove('show'); modal.setAttribute('aria-hidden','true'); modalForm.reset();
+  alert(Thanks ${modalForm.mname.value || 'User'}! Request received for: ${modalForm.mplan.value});
+  modal.classList.remove('show'); modalForm.reset();
 });
 
-// close modal on backdrop click
-modal.addEventListener('click', (e)=> { if(e.target === modal){ modal.classList.remove('show'); modal.setAttribute('aria-hidden','true'); } });
+///// CONTACT FORM /////
+const form = document.getElementById('signup-form');
+form && form.addEventListener('submit', (e)=> {
+  e.preventDefault();
+  // capture referral if present in URL param
+  const urlParams = new URLSearchParams(location.search);
+  const refParam = urlParams.get('ref') || localStorage.getItem('dw_ref');
+  // For production: send to server via fetch()
+  alert(Thanks ${form.name.value || 'User'}! Deep Wave will call you soon. Your referral: ${refParam || '—'});
+  form.reset();
+});
 
-// ---------- Audio toggle (touch + click) with fade ----------
+///// AUDIO (fade in/out) /////
 const soundBtn = document.getElementById('soundBtn');
 const audio = document.getElementById('waveSound');
 let playing = false;
-
-function fadeIn(audioEl, ms = 1400){
+function fadeIn(audioEl, ms=1400){
   if(!audioEl) return;
   audioEl.volume = 0;
-  audioEl.play().catch(()=>{ /* blocked until user gesture */ });
+  const p = audioEl.play();
+  if(p && p.catch) p.catch(()=>{});
   const step = 0.02;
-  const interval = setInterval(()=> {
+  const iv = setInterval(()=> {
     audioEl.volume = Math.min(1, +(audioEl.volume + step).toFixed(3));
-    if(audioEl.volume >= 1) clearInterval(interval);
-  }, ms * step);
+    if(audioEl.volume >= 1) clearInterval(iv);
+  }, ms*step);
 }
-function fadeOut(audioEl, ms = 1000){
+function fadeOut(audioEl, ms=1000){
   if(!audioEl) return;
   const step = 0.02;
-  const interval = setInterval(()=> {
+  const iv = setInterval(()=> {
     audioEl.volume = Math.max(0, +(audioEl.volume - step).toFixed(3));
-    if(audioEl.volume <= 0){
-      audioEl.pause(); audioEl.currentTime = 0; clearInterval(interval);
-    }
-  }, ms * step);
+    if(audioEl.volume <= 0){ audioEl.pause(); audioEl.currentTime = 0; clearInterval(iv); }
+  }, ms*step);
 }
-
-// ripple trigger
 function triggerRipple(el){
-  const ripple = el.parentElement.querySelector('.ripple');
-  if(!ripple) return;
-  ripple.style.opacity = '0.95';
-  ripple.style.width = '220px'; ripple.style.height = '220px'; ripple.style.transform = 'translate(-50%,-50%) scale(1)';
-  setTimeout(()=> { ripple.style.opacity = '0'; ripple.style.width='0'; ripple.style.height='0'; ripple.style.transform='translate(-50%,-50%) scale(0)'; }, 700);
+  const r = el.parentElement.querySelector('.ripple'); if(!r) return;
+  r.style.opacity = '0.95'; r.style.width = '220px'; r.style.height = '220px'; r.style.transform = 'translate(-50%,-50%) scale(1)';
+  setTimeout(()=> { r.style.opacity='0'; r.style.width='0'; r.style.height='0'; r.style.transform='translate(-50%,-50%) scale(0)'; },700);
 }
-
 if(soundBtn){
-  const handler = async ()=>{
+  const handler = ()=>{
     if(!playing){
-      try{
-        fadeIn(audio, 1400);
-        playing = true;
-        soundBtn.classList.add('playing');
-        soundBtn.setAttribute('aria-pressed','true');
-        soundBtn.querySelector('.btn-text').textContent = 'Stop the Wave';
-        triggerRipple(soundBtn);
-      }catch(e){
-        console.log('play blocked', e);
-      }
+      fadeIn(audio,1400);
+      playing = true;
+      soundBtn.classList.add('playing');
+      soundBtn.setAttribute('aria-pressed','true');
+      soundBtn.querySelector('.btn-text') && (soundBtn.querySelector('.btn-text').textContent = 'Stop the Wave');
+      triggerRipple(soundBtn);
     } else {
-      fadeOut(audio, 1100);
+      fadeOut(audio,1100);
       playing = false;
       soundBtn.classList.remove('playing');
       soundBtn.setAttribute('aria-pressed','false');
-      soundBtn.querySelector('.btn-text').textContent = 'Feel the Wave';
+      soundBtn.querySelector('.btn-text') && (soundBtn.querySelector('.btn-text').textContent = 'Feel the Wave');
       triggerRipple(soundBtn);
     }
   };
@@ -188,23 +219,50 @@ if(soundBtn){
   soundBtn.addEventListener('click', handler);
 }
 
-// ---------- lightweight contact form handling ----------
-const form = document.getElementById('signup-form');
-if(form){
-  form.addEventListener('submit', (e)=>{
-    e.preventDefault();
-    const name = form.name.value || 'User';
-    alert(Thanks ${name}! Deep Wave will call you soon.);
-    form.reset();
-  });
+///// REVIEWS SLIDER /////
+const slides = Array.from(document.querySelectorAll('.review-slide'));
+let cur = 0;
+const prevBtn = document.querySelector('.rev-nav.prev');
+const nextBtn = document.querySelector('.rev-nav.next');
+function showSlide(i){
+  if(!slides.length) return;
+  slides.forEach(s=>s.classList.remove('active'));
+  slides[i].classList.add('active');
+}
+if(slides.length){
+  showSlide(0);
+  prevBtn?.addEventListener('click', ()=>{ cur=(cur-1+slides.length)%slides.length; showSlide(cur); });
+  nextBtn?.addEventListener('click', ()=>{ cur=(cur+1)%slides.length; showSlide(cur); });
+  setInterval(()=>{ cur=(cur+1)%slides.length; showSlide(cur); },6000);
 }
 
-// ---------- Mobile menu toggle ----------
-const menuToggle = document.getElementById('menu-toggle');
-menuToggle && menuToggle.addEventListener('click', ()=> {
-  const nav = document.querySelector('.nav-links');
-  if(nav.style.display === 'flex'){ nav.style.display = 'none'; } else { nav.style.display = 'flex'; nav.style.flexDirection = 'column'; nav.style.gap = '12px'; nav.style.paddingRight = '20px'; }
+///// MAGNETIC CURSOR & HOVER /////
+const fcursor = document.getElementById('fcursor');
+document.addEventListener('mousemove', (e)=>{ if(!fcursor) return; fcursor.style.left = e.clientX + 'px'; fcursor.style.top = e.clientY + 'px'; });
+document.querySelectorAll('a, button, .btn').forEach(el=>{
+  el.addEventListener('mouseenter', ()=>{ if(fcursor){ fcursor.style.transform = 'translate(-50%,-50%) scale(1.8)'; fcursor.style.width='34px'; fcursor.style.height='34px'; }});
+  el.addEventListener('mouseleave', ()=>{ if(fcursor){ fcursor.style.transform = 'translate(-50%,-50%) scale(1)'; fcursor.style.width='18px'; fcursor.style.height='18px'; }});
 });
 
-// initial reveal run
-setTimeout(revealOnScroll, 300);
+///// GYROSCOPE PARALLAX (mobile) /////
+if(window.DeviceOrientationEvent){
+  window.addEventListener('deviceorientation', (e)=>{
+    const gx = e.gamma || 0; const gy = e.beta || 0;
+    const hero = document.querySelector('.hero-inner');
+    if(hero) hero.style.transform = translate3d(${gx/30}vw, ${gy/80}vh, 0);
+  }, true);
+}
+
+///// NAV SMOOTH SCROLL /////
+document.querySelectorAll('.nav-links a').forEach(a=>{
+  a.addEventListener('click', (e)=>{
+    e.preventDefault();
+    const t = document.querySelector(a.getAttribute('href'));
+    if(t) t.scrollIntoView({ behavior:'smooth', block:'start' });
+  });
+});
+
+// LIGHT initial reveal after load
+setTimeout(()=> {
+  document.querySelectorAll('.plan-card').forEach((el,i)=>{ el.style.opacity=1; el.style.transform='translateY(0)'; el.style.transitionDelay = ${i*70}ms; });
+}, 400);
