@@ -3,14 +3,15 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Deep Wave — Premium Internet</title>
+  <title>Deep Wave — Ultra Premium Internet</title>
   <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-  <!-- Background canvas for subtle particles -->
+  <!-- Canvas for subtle particles -->
   <canvas id="bg-canvas" class="bg-canvas" aria-hidden="true"></canvas>
 
-  <!-- NAVBAR -->
+  <!-- NAV -->
   <header class="navbar" role="banner">
     <div class="brand">
       <div class="brand-mark" aria-hidden="true">🌊</div>
@@ -36,11 +37,19 @@
 
         <div class="hero-ctas">
           <a class="btn btn-primary" href="#plans">View Plans</a>
-          <button id="soundBtn" class="btn btn-outline" aria-pressed="false">🌊 Feel the Wave</button>
+
+          <!-- sound toggle with ripple container -->
+          <div class="sound-wrap">
+            <button id="soundBtn" class="btn btn-outline" aria-pressed="false" title="Play ocean ambient">
+              <span class="btn-icon">🌊</span>
+              <span class="btn-text">Feel the Wave</span>
+            </button>
+            <span class="ripple" aria-hidden="true"></span>
+          </div>
         </div>
       </div>
 
-      <!-- neon decorative lines -->
+      <!-- decorative neon lines -->
       <div class="neon-lines" aria-hidden="true">
         <span></span><span></span><span></span>
       </div>
@@ -58,6 +67,9 @@
         <svg class="wave wave-front" viewBox="0 0 1440 320" preserveAspectRatio="none">
           <path d="M0,200 C200,160 400,260 720,200 C1040,140 1240,240 1440,200 L1440 320 L0 320 Z"></path>
         </svg>
+
+        <!-- subtle light reflection (moving gradient mask) -->
+        <div class="light-reflect" aria-hidden="true"></div>
       </div>
     </section>
 
@@ -148,7 +160,7 @@
     <p>© 2025 Deep Wave • Designed by Deep Patra</p>
   </footer>
 
-  <!-- Audio element (looping ocean ambient). Replace with local file if desired -->
+  <!-- Audio element (looping ocean ambient). Replace with local file if preferred. -->
   <audio id="waveSound" loop
     src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_7b1e6b5e5a.mp3?filename=ocean-waves-ambient-110397.mp3"></audio>
 
