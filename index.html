@@ -3,166 +3,53 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>DEEP WAVE — Multiverse Ultra Pro Max WLORD Infinity 11D+</title>
-  <meta name="description" content="Deep Wave — Multiverse Ultra Pro Max WLORD Infinity 11D+ — Beyond Dimensions.">
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;900&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+  <title>DEEP WAVE — OMNI GODMODE (Ultra Supreme)</title>
+  <meta name="description" content="Deep Wave — OMNI GODMODE: highest-tier immersive web experience (Three.js + audio-reactive shaders + AI-mock UI)" />
   <link rel="stylesheet" href="style.css">
-  <!-- Three.js for 10D/11D visuals -->
-  <script src="https://cdn.jsdelivr.net/npm/three@0.153.0/build/three.min.js"></script>
+  <!-- Three.js module -->
+  <script type="module" crossorigin src="https://cdn.jsdelivr.net/npm/three@0.153.0/build/three.module.js"></script>
 </head>
-<body data-theme="galaxy">
-  <!-- Onboarding overlay -->
-  <div id="onboard" class="overlay hidden">
-    <div class="onboard-card">
-      <h2>Welcome to Deep Wave</h2>
-      <p>Experience the Multiverse UI. Quick tour?</p>
-      <div class="row">
-        <button class="btn primary" id="startTour">Start Tour</button>
-        <button class="btn outline" id="skipTour">Skip</button>
+<body>
+  <div id="app">
+    <canvas id="gl"></canvas>
+
+    <!-- UI overlay -->
+    <div class="ui top-left">
+      <div class="brand">🌌 <strong>DEEP WAVE</strong> <span>OMNI-GODMODE</span></div>
+      <div class="controls">
+        <button id="micBtn" class="chip">🎤 Mic</button>
+        <button id="musicBtn" class="chip">🔊 Music</button>
+        <button id="warpBtn" class="chip">✨ Warp</button>
+        <button id="xrBtn" class="chip">🕶 XR</button>
+        <select id="themeSelect" class="chip">
+          <option value="galaxy">Galaxy</option>
+          <option value="void">Void</option>
+          <option value="dawn">Dawn</option>
+        </select>
       </div>
     </div>
+
+    <div class="ui top-right meter" id="meter">
+      <div>Speed: <span id="speedVal">—</span> Mbps</div>
+      <div>Ping: <span id="pingVal">—</span> ms</div>
+    </div>
+
+    <div class="ui bottom-left note">Tip: Click to supernova • Double-click to reform logo • Press <kbd>P</kbd> for Plans</div>
+
+    <!-- Hidden admin / debug panel -->
+    <div id="adminPanel" class="admin hidden">
+      <div class="admin-header">ADMIN • COSMIC</div>
+      <div class="admin-body">
+        <label>Particle Count <input id="particleCount" type="range" min="100" max="3000" value="600"></label>
+        <label>Audio Sensitivity <input id="audioGain" type="range" min="0" max="3" step="0.01" value="1.0"></label>
+        <button id="resetBtn" class="small">Reset Visuals</button>
+      </div>
+    </div>
+
+    <!-- cursor trail container -->
+    <div id="trail" class="trail"></div>
   </div>
 
-  <!-- Top Frosty Nav -->
-  <header class="nav">
-    <div class="brand">
-      <div class="logo">DEEP <span>WAVE</span></div>
-      <div class="subtitle">Multiverse · ULTRA WLORD 11D+</div>
-    </div>
-    <nav class="links">
-      <a href="#home">Home</a>
-      <a href="#plans">Plans</a>
-      <a href="#ai">AI Hub</a>
-      <a href="#tools">Tools</a>
-      <a href="#contact">Contact</a>
-      <button id="voiceToggle" class="chip">🔈 Voice</button>
-      <button id="themeBtn" class="chip">Theme</button>
-    </nav>
-  </header>
-
-  <!-- HERO / 11D MULTIVERSE CANVAS -->
-  <main id="home" class="hero">
-    <div class="hero-left">
-      <h1 class="main-title">
-        <span id="titleLine">Not just a Network — A Multiverse.</span>
-        <small id="subLine">Deep Wave — Beyond Dimensions, Beyond Limits.</small>
-      </h1>
-      <p class="lead">Neural AI • Holographic UI • AR Mock • Zero-Latency Illusions</p>
-
-      <div class="cta-row">
-        <button class="btn primary" onclick="openPortal()">🔮 Enter DeepVerse</button>
-        <button class="btn outline" onclick="openPlans()">See Plans</button>
-        <button class="btn ghost" onclick="startSpin()">Spin & Win</button>
-      </div>
-
-      <div class="meters">
-        <div class="meter">
-          <div class="meter-label">Sim Speed</div>
-          <div class="speed-value"><span id="speedVal">—</span> Mbps</div>
-        </div>
-        <div class="meter">
-          <div class="meter-label">Ping</div>
-          <div class="speed-value"><span id="pingVal">—</span> ms</div>
-        </div>
-      </div>
-
-      <!-- onboarding hints -->
-      <div class="hint">Tip: Say “Show plans” or click the mic on AI hub.</div>
-    </div>
-
-    <div class="hero-right">
-      <!-- 11D container (Three.js renders here) -->
-      <div id="hero-3d" class="hero-3d"></div>
-
-      <!-- mini AI Hub card -->
-      <div class="ai-card">
-        <div class="ai-title">DeepMind • Active</div>
-        <div id="aiStatus" class="ai-status">Analyzing cosmic flux…</div>
-        <div class="ai-controls">
-          <input id="aiInput" placeholder="Ask DeepMind: recommend plan, check speed..." />
-          <button class="btn small" id="askBtn">Ask</button>
-          <button class="btn small mic" id="micBtn">🎤</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- layered starfield + nebula canvases are created by script -->
-  </main>
-
-  <!-- PLANS -->
-  <section id="plans" class="section plans">
-    <h2>GALAXY PLAN ZONE</h2>
-    <div class="plans-row">
-      <div class="plan-card">
-        <h3>Wave Nano</h3><p class="price">₹499 <small>/mo</small></p><p>100 Mbps • Starter</p>
-        <button class="btn small" onclick="enquire('Wave Nano')">Enquire</button>
-      </div>
-      <div class="plan-card popular">
-        <h3>Wave Titan</h3><p class="price">₹999 <small>/mo</small></p><p>500 Mbps • Pro</p>
-        <button class="btn small" onclick="enquire('Wave Titan')">Buy Now</button>
-      </div>
-      <div class="plan-card ultra">
-        <h3>Wave Infinity</h3><p class="price">₹1999 <small>/mo</small></p><p>1Gbps • AI Boost</p>
-        <button class="btn small" onclick="enquire('Wave Infinity')">Enquire</button>
-      </div>
-    </div>
-  </section>
-
-  <!-- Tools (AR mock, Speed test, Visitors globe) -->
-  <section id="tools" class="section tools">
-    <div class="tools-grid">
-      <div class="tool">
-        <h4>AR Mock</h4>
-        <p>Open camera & see hologram overlay (mock mode).</p>
-        <button class="btn small" id="arBtn">Open AR Mock</button>
-      </div>
-      <div class="tool">
-        <h4>Speed Test</h4>
-        <p>Run a simulated WebRTC-style test.</p>
-        <button class="btn small" id="runSpeed">Run Test</button>
-      </div>
-      <div class="tool">
-        <h4>Visitors Globe</h4>
-        <p>Real-time simulated global users.</p>
-        <button class="btn small" id="globeBtn">Show Globe</button>
-      </div>
-    </div>
-  </section>
-
-  <!-- AI Section full -->
-  <section id="ai" class="section ai-full">
-    <h2>DeepMind Infinity</h2>
-    <div id="aiReply" class="ai-reply">DeepMind waiting for your command…</div>
-  </section>
-
-  <!-- Spin & Win modal -->
-  <div id="spinModal" class="overlay hidden">
-    <div class="spin-card">
-      <h3>Spin the Galaxy Wheel</h3>
-      <canvas id="spinCanvas" width="320" height="320"></canvas>
-      <button class="btn primary" id="spinBtn">SPIN</button>
-      <div id="spinResult" class="spinResult"></div>
-      <button class="btn outline" onclick="closeSpin()">Close</button>
-    </div>
-  </div>
-
-  <!-- Contact -->
-  <section id="contact" class="section contact">
-    <h2>Contact</h2>
-    <p>Email: <a href="mailto:deeppatra712@gmail.com">deeppatra712@gmail.com</a> • Phone: <a href="tel:9088774125">+91 9088774125</a></p>
-    <form id="contactForm" onsubmit="submitContact(event)">
-      <input name="name" placeholder="Name" required />
-      <input name="phone" placeholder="Phone" required />
-      <textarea name="msg" placeholder="Message"></textarea>
-      <button class="btn primary" type="submit">Send</button>
-    </form>
-  </section>
-
-  <footer class="footer">
-    <div>© <span id="year"></span> Deep Wave · Multiverse ULTRA WLORD</div>
-    <div class="socials"><a href="#">Share</a> · <a href="#">GitHub</a></div>
-  </footer>
-
-  <script src="script.js"></script>
+  <script type="module" src="script.js"></script>
 </body>
 </html>
