@@ -1,153 +1,67 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Deep Wave — Premium Internet</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Deep Wave Internet</title>
   <link rel="stylesheet" href="style.css" />
-  <script defer src="script.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-  <!-- Particle canvas (subtle floating dots) -->
-  <canvas id="bg-canvas" class="bg-canvas" aria-hidden></canvas>
-
-  <header class="navbar">
-    <div class="brand">
-      <div class="brand-mark">🌊</div>
-      <div class="brand-name">Deep Wave</div>
+  <header class="hero">
+    <div class="content">
+      <h1>Experience the Power of <span>Deep Wave Internet</span></h1>
+      <p>Ultra-fast • Reliable • Future-ready connectivity for home & business</p>
+      <div class="buttons">
+        <a href="#plans" class="btn">View Plans</a>
+        <button id="soundBtn" class="sound-btn">🌊 Feel the Wave</button>
+      </div>
     </div>
 
-    <nav class="nav-links" aria-label="Main navigation">
-      <a href="#home">Home</a>
-      <a href="#plans">Plans</a>
-      <a href="#contact">Contact</a>
-    </nav>
+    <!-- Animated Wave Background -->
+    <svg class="wave-bg" viewBox="0 0 1440 320">
+      <path fill="#0099ff" fill-opacity="0.5"
+        d="M0,224L48,208C96,192,192,160,288,133.3C384,107,480,85,576,96C672,107,768,149,864,160C960,171,1056,149,1152,144C1248,139,1344,149,1392,154.7L1440,160L1440,320L0,320Z">
+      </path>
+    </svg>
   </header>
 
-  <main>
-    <!-- HERO (with layered, realistic waves + neon lines) -->
-    <section id="home" class="hero" aria-labelledby="hero-heading">
-      <!-- animated gradient background (CSS) -->
-      <div class="hero-inner">
-        <h1 id="hero-heading">Experience the Power of <span>Deep Wave Internet</span></h1>
-        <p class="subtitle">Ultra-fast • Reliable • Future-ready connectivity for home & business</p>
-
-        <div class="hero-ctas">
-          <a href="#plans" class="btn primary">View Plans</a>
-          <button id="sound-toggle" class="btn outline" aria-pressed="false">🌊 Feel the Wave</button>
-        </div>
+  <section id="plans" class="plans">
+    <h2 class="section-title">Our Premium Plans</h2>
+    <div class="plan-grid">
+      <div class="plan-card">
+        <h3>Only Internet</h3>
+        <p class="price">₹2500 / 5 Months</p>
+        <p>Speed: <strong>40 Mbps</strong></p>
       </div>
-
-      <!-- neon floating lines -->
-      <div class="neon-lines" aria-hidden>
-        <span></span><span></span><span></span>
+      <div class="plan-card">
+        <h3>Only Internet</h3>
+        <p class="price">₹2500 / 6 Months</p>
+        <p>Speed: <strong>30 Mbps</strong></p>
       </div>
-
-      <!-- Multi-layer SVG waves (hero-only) -->
-      <div class="waves" aria-hidden>
-        <svg class="wave wave-top" viewBox="0 0 1440 240" preserveAspectRatio="none">
-          <path d="M0,120 C200,200 400,20 720,120 C1040,220 1240,40 1440,120 L1440 240 L0 240 Z" />
-        </svg>
-        <svg class="wave wave-mid" viewBox="0 0 1440 200" preserveAspectRatio="none">
-          <path d="M0,100 C200,40 400,200 720,100 C1040,0 1240,160 1440,100 L1440 200 L0 200 Z" />
-        </svg>
-        <svg class="wave wave-front" viewBox="0 0 1440 160" preserveAspectRatio="none">
-          <path d="M0,60 C200,120 400,0 720,60 C1040,120 1240,10 1440,60 L1440 160 L0 160 Z" />
-        </svg>
+      <div class="plan-card">
+        <h3>Internet + TV</h3>
+        <p class="price">₹2500 / 4.5 Months</p>
+        <ul>
+          <li>27 OTT Apps</li>
+          <li>390 Channels</li>
+          <li>32 HD Channels</li>
+          <li>1 Call No Free</li>
+        </ul>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <!-- PLANS -->
-    <section id="plans" class="plans" aria-labelledby="plans-heading">
-      <h2 id="plans-heading" class="section-title">Our Premium Plans</h2>
+  <section id="contact" class="contact">
+    <h2>Contact Us</h2>
+    <p><strong>Name:</strong> Deep Patra</p>
+    <p><strong>Email:</strong> <a href="mailto:deeppatra712@gmail.com">deeppatra712@gmail.com</a></p>
+    <p><strong>Phone:</strong> <a href="tel:9088774125">9088774125</a></p>
+  </section>
 
-      <div class="plan-grid">
-        <article class="plan-card" aria-labelledby="plan1">
-          <div class="plan-head">
-            <h3 id="plan1">Only Internet</h3>
-            <div class="tag">Popular</div>
-          </div>
-          <div class="plan-body">
-            <p class="price">₹2500 <span class="muted">/ 5 months</span></p>
-            <p class="meta">Speed: <strong>40 Mbps</strong></p>
-            <a class="btn secondary" href="#contact">Get This</a>
-          </div>
-        </article>
+  <audio id="waveSound"
+    src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_7b1e6b5e5a.mp3?filename=ocean-waves-ambient-110397.mp3"
+    loop></audio>
 
-        <article class="plan-card" aria-labelledby="plan2">
-          <div class="plan-head">
-            <h3 id="plan2">Only Internet</h3>
-          </div>
-          <div class="plan-body">
-            <p class="price">₹2500 <span class="muted">/ 6 months</span></p>
-            <p class="meta">Speed: <strong>30 Mbps</strong></p>
-            <a class="btn secondary" href="#contact">Get This</a>
-          </div>
-        </article>
-
-        <article class="plan-card" aria-labelledby="plan3">
-          <div class="plan-head">
-            <h3 id="plan3">Internet + TV Combo</h3>
-            <div class="tag alt">Combo</div>
-          </div>
-          <div class="plan-body">
-            <p class="price">₹2500 <span class="muted">/ 4.5 months</span></p>
-            <ul class="features">
-              <li>27 OTT Apps</li>
-              <li>390 Channels</li>
-              <li>32 HD Channels</li>
-              <li>1 Call No Free</li>
-            </ul>
-            <a class="btn secondary" href="#contact">Get Combo</a>
-          </div>
-        </article>
-      </div>
-    </section>
-
-    <!-- CONTACT -->
-    <section id="contact" class="contact" aria-labelledby="contact-heading">
-      <h2 id="contact-heading" class="section-title">Contact & Sign Up</h2>
-
-      <div class="contact-grid">
-        <div class="contact-card">
-          <h4>Reach Out</h4>
-          <p><strong>Name:</strong> Deep Patra</p>
-          <p><strong>Phone:</strong> <a href="tel:9088774125">9088774125</a></p>
-          <p><strong>Email:</strong> <a href="mailto:deeppatra712@gmail.com">deeppatra712@gmail.com</a></p>
-        </div>
-
-        <form class="contact-form" id="signup-form" aria-label="Sign up form">
-          <label>
-            Your name
-            <input type="text" name="name" placeholder="Your name" required />
-          </label>
-
-          <label>
-            Phone
-            <input type="tel" name="phone" placeholder="9088774125" required />
-          </label>
-
-          <label>
-            Plan
-            <select name="plan">
-              <option>Only Internet — 40 Mbps (₹2500 / 5 mo)</option>
-              <option>Only Internet — 30 Mbps (₹2500 / 6 mo)</option>
-              <option>Internet + TV Combo (₹2500 / 4.5 mo)</option>
-            </select>
-          </label>
-
-          <button type="submit" class="btn primary">Request Call</button>
-        </form>
-      </div>
-    </section>
-  </main>
-
-  <footer class="site-footer">
-    <p>© 2025 Deep Wave • Designed by Deep Patra • Ultra Premium</p>
-  </footer>
-
-  <!-- audio (soft ocean wave) - local file not included; using web-safe fallback via embedded base64 short loop or keep commented for custom file -->
-  <!-- If you have an mp3, replace src in script.js to play it. -->
+  <script src="script.js"></script>
 </body>
 </html>
