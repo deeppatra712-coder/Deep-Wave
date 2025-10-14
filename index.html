@@ -9,15 +9,16 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-  <!-- Particle canvas for subtle background motion -->
-  <canvas id="bg-canvas" class="bg-canvas"></canvas>
+  <!-- Particle canvas (subtle floating dots) -->
+  <canvas id="bg-canvas" class="bg-canvas" aria-hidden></canvas>
 
   <header class="navbar">
     <div class="brand">
       <div class="brand-mark">🌊</div>
       <div class="brand-name">Deep Wave</div>
     </div>
-    <nav class="nav-links">
+
+    <nav class="nav-links" aria-label="Main navigation">
       <a href="#home">Home</a>
       <a href="#plans">Plans</a>
       <a href="#contact">Contact</a>
@@ -25,35 +26,46 @@
   </header>
 
   <main>
-    <!-- HERO -->
-    <section id="home" class="hero">
+    <!-- HERO (with layered, realistic waves + neon lines) -->
+    <section id="home" class="hero" aria-labelledby="hero-heading">
+      <!-- animated gradient background (CSS) -->
       <div class="hero-inner">
-        <h1>Experience the Power of <span>Deep Wave Internet</span></h1>
+        <h1 id="hero-heading">Experience the Power of <span>Deep Wave Internet</span></h1>
         <p class="subtitle">Ultra-fast • Reliable • Future-ready connectivity for home & business</p>
+
         <div class="hero-ctas">
           <a href="#plans" class="btn primary">View Plans</a>
-          <a href="tel:9088774125" class="btn outline">Call Now</a>
+          <button id="sound-toggle" class="btn outline" aria-pressed="false">🌊 Feel the Wave</button>
         </div>
       </div>
 
-      <!-- decorative neon lines -->
-      <div class="neon-lines">
+      <!-- neon floating lines -->
+      <div class="neon-lines" aria-hidden>
         <span></span><span></span><span></span>
       </div>
 
-      <!-- SVG soft wave at bottom -->
-      <svg class="hero-wave" viewBox="0 0 1440 120" preserveAspectRatio="none" aria-hidden>
-        <path d="M0,40 C180,120 360,0 720,40 C1080,80 1260,20 1440,60 L1440 120 L0 120 Z" fill="rgba(0,220,255,0.06)"></path>
-      </svg>
+      <!-- Multi-layer SVG waves (hero-only) -->
+      <div class="waves" aria-hidden>
+        <svg class="wave wave-top" viewBox="0 0 1440 240" preserveAspectRatio="none">
+          <path d="M0,120 C200,200 400,20 720,120 C1040,220 1240,40 1440,120 L1440 240 L0 240 Z" />
+        </svg>
+        <svg class="wave wave-mid" viewBox="0 0 1440 200" preserveAspectRatio="none">
+          <path d="M0,100 C200,40 400,200 720,100 C1040,0 1240,160 1440,100 L1440 200 L0 200 Z" />
+        </svg>
+        <svg class="wave wave-front" viewBox="0 0 1440 160" preserveAspectRatio="none">
+          <path d="M0,60 C200,120 400,0 720,60 C1040,120 1240,10 1440,60 L1440 160 L0 160 Z" />
+        </svg>
+      </div>
     </section>
 
     <!-- PLANS -->
-    <section id="plans" class="plans">
-      <h2 class="section-title">Our Premium Plans</h2>
+    <section id="plans" class="plans" aria-labelledby="plans-heading">
+      <h2 id="plans-heading" class="section-title">Our Premium Plans</h2>
+
       <div class="plan-grid">
-        <article class="plan-card">
+        <article class="plan-card" aria-labelledby="plan1">
           <div class="plan-head">
-            <h3>Only Internet</h3>
+            <h3 id="plan1">Only Internet</h3>
             <div class="tag">Popular</div>
           </div>
           <div class="plan-body">
@@ -63,9 +75,9 @@
           </div>
         </article>
 
-        <article class="plan-card">
+        <article class="plan-card" aria-labelledby="plan2">
           <div class="plan-head">
-            <h3>Only Internet</h3>
+            <h3 id="plan2">Only Internet</h3>
           </div>
           <div class="plan-body">
             <p class="price">₹2500 <span class="muted">/ 6 months</span></p>
@@ -74,9 +86,9 @@
           </div>
         </article>
 
-        <article class="plan-card">
+        <article class="plan-card" aria-labelledby="plan3">
           <div class="plan-head">
-            <h3>Internet + TV Combo</h3>
+            <h3 id="plan3">Internet + TV Combo</h3>
             <div class="tag alt">Combo</div>
           </div>
           <div class="plan-body">
@@ -94,8 +106,9 @@
     </section>
 
     <!-- CONTACT -->
-    <section id="contact" class="contact">
-      <h2 class="section-title">Contact & Sign Up</h2>
+    <section id="contact" class="contact" aria-labelledby="contact-heading">
+      <h2 id="contact-heading" class="section-title">Contact & Sign Up</h2>
+
       <div class="contact-grid">
         <div class="contact-card">
           <h4>Reach Out</h4>
@@ -104,7 +117,7 @@
           <p><strong>Email:</strong> <a href="mailto:deeppatra712@gmail.com">deeppatra712@gmail.com</a></p>
         </div>
 
-        <form class="contact-form" id="signup-form">
+        <form class="contact-form" id="signup-form" aria-label="Sign up form">
           <label>
             Your name
             <input type="text" name="name" placeholder="Your name" required />
@@ -131,7 +144,10 @@
   </main>
 
   <footer class="site-footer">
-    <p>© 2025 Deep Wave • Designed by Deep Patra • Premium Blue Edition</p>
+    <p>© 2025 Deep Wave • Designed by Deep Patra • Ultra Premium</p>
   </footer>
+
+  <!-- audio (soft ocean wave) - local file not included; using web-safe fallback via embedded base64 short loop or keep commented for custom file -->
+  <!-- If you have an mp3, replace src in script.js to play it. -->
 </body>
 </html>
