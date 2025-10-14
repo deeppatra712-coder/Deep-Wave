@@ -1,69 +1,137 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Deep Wave Internet</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Deep Wave — Premium Internet</title>
   <link rel="stylesheet" href="style.css" />
   <script defer src="script.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
+  <!-- Particle canvas for subtle background motion -->
+  <canvas id="bg-canvas" class="bg-canvas"></canvas>
+
   <header class="navbar">
-    <h1 class="logo">🌊 Deep Wave</h1>
-    <nav>
+    <div class="brand">
+      <div class="brand-mark">🌊</div>
+      <div class="brand-name">Deep Wave</div>
+    </div>
+    <nav class="nav-links">
       <a href="#home">Home</a>
       <a href="#plans">Plans</a>
       <a href="#contact">Contact</a>
     </nav>
   </header>
 
-  <section id="home" class="hero">
-    <div class="animated-bg"></div>
-    <div class="hero-content">
-      <h2>Experience the Power of <span>Deep Wave Internet</span></h2>
-      <p>Fast. Reliable. Future-Ready Connectivity for Home & Office.</p>
-      <a href="#plans" class="btn">View Plans</a>
-    </div>
-    <div class="wave-bg"></div>
-  </section>
-
-  <section id="plans" class="plans">
-    <h2 class="section-title">Our Plans</h2>
-    <div class="plan-grid">
-      <div class="plan-card">
-        <h3>Only Internet</h3>
-        <p class="price">₹2500 / 5 Months</p>
-        <p>Speed: <strong>40 Mbps</strong></p>
+  <main>
+    <!-- HERO -->
+    <section id="home" class="hero">
+      <div class="hero-inner">
+        <h1>Experience the Power of <span>Deep Wave Internet</span></h1>
+        <p class="subtitle">Ultra-fast • Reliable • Future-ready connectivity for home & business</p>
+        <div class="hero-ctas">
+          <a href="#plans" class="btn primary">View Plans</a>
+          <a href="tel:9088774125" class="btn outline">Call Now</a>
+        </div>
       </div>
 
-      <div class="plan-card">
-        <h3>Only Internet</h3>
-        <p class="price">₹2500 / 6 Months</p>
-        <p>Speed: <strong>30 Mbps</strong></p>
+      <!-- decorative neon lines -->
+      <div class="neon-lines">
+        <span></span><span></span><span></span>
       </div>
 
-      <div class="plan-card">
-        <h3>Internet + TV Combo</h3>
-        <p class="price">₹2500 / 4.5 Months</p>
-        <ul>
-          <li>27 OTT Apps</li>
-          <li>390 Channels</li>
-          <li>32 HD Channels</li>
-          <li>1 Call No Free</li>
-        </ul>
+      <!-- SVG soft wave at bottom -->
+      <svg class="hero-wave" viewBox="0 0 1440 120" preserveAspectRatio="none" aria-hidden>
+        <path d="M0,40 C180,120 360,0 720,40 C1080,80 1260,20 1440,60 L1440 120 L0 120 Z" fill="rgba(0,220,255,0.06)"></path>
+      </svg>
+    </section>
+
+    <!-- PLANS -->
+    <section id="plans" class="plans">
+      <h2 class="section-title">Our Premium Plans</h2>
+      <div class="plan-grid">
+        <article class="plan-card">
+          <div class="plan-head">
+            <h3>Only Internet</h3>
+            <div class="tag">Popular</div>
+          </div>
+          <div class="plan-body">
+            <p class="price">₹2500 <span class="muted">/ 5 months</span></p>
+            <p class="meta">Speed: <strong>40 Mbps</strong></p>
+            <a class="btn secondary" href="#contact">Get This</a>
+          </div>
+        </article>
+
+        <article class="plan-card">
+          <div class="plan-head">
+            <h3>Only Internet</h3>
+          </div>
+          <div class="plan-body">
+            <p class="price">₹2500 <span class="muted">/ 6 months</span></p>
+            <p class="meta">Speed: <strong>30 Mbps</strong></p>
+            <a class="btn secondary" href="#contact">Get This</a>
+          </div>
+        </article>
+
+        <article class="plan-card">
+          <div class="plan-head">
+            <h3>Internet + TV Combo</h3>
+            <div class="tag alt">Combo</div>
+          </div>
+          <div class="plan-body">
+            <p class="price">₹2500 <span class="muted">/ 4.5 months</span></p>
+            <ul class="features">
+              <li>27 OTT Apps</li>
+              <li>390 Channels</li>
+              <li>32 HD Channels</li>
+              <li>1 Call No Free</li>
+            </ul>
+            <a class="btn secondary" href="#contact">Get Combo</a>
+          </div>
+        </article>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <section id="contact" class="contact">
-    <h2 class="section-title">Contact Us</h2>
-    <p><strong>Name:</strong> Deep Patra</p>
-    <p><strong>Email:</strong> <a href="mailto:deeppatra712@gmail.com">deeppatra712@gmail.com</a></p>
-    <p><strong>Mobile:</strong> <a href="tel:9088774125">9088774125</a></p>
-  </section>
+    <!-- CONTACT -->
+    <section id="contact" class="contact">
+      <h2 class="section-title">Contact & Sign Up</h2>
+      <div class="contact-grid">
+        <div class="contact-card">
+          <h4>Reach Out</h4>
+          <p><strong>Name:</strong> Deep Patra</p>
+          <p><strong>Phone:</strong> <a href="tel:9088774125">9088774125</a></p>
+          <p><strong>Email:</strong> <a href="mailto:deeppatra712@gmail.com">deeppatra712@gmail.com</a></p>
+        </div>
 
-  <footer>
-    <p>© 2025 Deep Wave Internet | Designed with 💙 by Deep Patra</p>
+        <form class="contact-form" id="signup-form">
+          <label>
+            Your name
+            <input type="text" name="name" placeholder="Your name" required />
+          </label>
+
+          <label>
+            Phone
+            <input type="tel" name="phone" placeholder="9088774125" required />
+          </label>
+
+          <label>
+            Plan
+            <select name="plan">
+              <option>Only Internet — 40 Mbps (₹2500 / 5 mo)</option>
+              <option>Only Internet — 30 Mbps (₹2500 / 6 mo)</option>
+              <option>Internet + TV Combo (₹2500 / 4.5 mo)</option>
+            </select>
+          </label>
+
+          <button type="submit" class="btn primary">Request Call</button>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>© 2025 Deep Wave • Designed by Deep Patra • Premium Blue Edition</p>
   </footer>
 </body>
 </html>
