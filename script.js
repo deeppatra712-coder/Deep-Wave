@@ -1,284 +1,429 @@
-/* DEEP WAVE — Multiverse ULTRA WLORD Infinity 11D+ JS
-   - 11D visual (Three.js layered nebula + energy core)
-   - starfield + meteors + visitors globe
-   - DeepMind mock AI (voice + text)
-   - AR mock (camera overlay)
-   - Spin-to-win, onboarding, theme presets
-*/
+// script.js — DEEP WAVE OMNI GODMODE (module)
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.153.0/build/three.module.js';
 
-/* ---------- basic UI helpers ---------- */
-document.getElementById('year').textContent = new Date().getFullYear();
-function $(s){return document.querySelector(s)}
-function $all(s){return document.querySelectorAll(s)}
+// DOM
+const canvas = document.getElementById('gl');
+const micBtn = document.getElementById('micBtn');
+const musicBtn = document.getElementById('musicBtn');
+const warpBtn = document.getElementById('warpBtn');
+const xrBtn = document.getElementById('xrBtn');
+const themeSelect = document.getElementById('themeSelect');
+const speedVal = document.getElementById('speedVal');
+const pingVal = document.getElementById('pingVal');
+const trailContainer = document.getElementById('trail');
+const adminPanel = document.getElementById('adminPanel');
+const particleCountInput = document.getElementById('particleCount');
+const audioGainInput = document.getElementById('audioGain') || { value: 1 };
 
-/* ---------- Onboard ---------- */
-const onboard = $('#onboard');
-if(onboard){ onboard.classList.remove('hidden'); }
-$('#startTour')?.addEventListener('click', ()=> { onboard.classList.add('hidden'); startTour(); });
-$('#skipTour')?.addEventListener('click', ()=> onboard.classList.add('hidden'));
-
-/* ---------- Title rotation ---------- */
-const titleLines = [
-  "Not just a Network — A Multiverse.",
-  "Where Reality Ends — Deep Wave Begins.",
-  "Beyond Dimensions, Beyond Limits."
-];
-let tI = 0;
-setInterval(()=> { tI=(tI+1)%titleLines.length; $('#titleLine').textContent = titleLines[tI]; }, 4200);
-
-/* ---------- 11D Universe (Three.js multi-layer) ---------- */
-(function initUniverse(){
-  const container = document.getElementById('hero-3d');
-  if(!container || typeof THREE === 'undefined') return;
-  const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(50, container.clientWidth/container.clientHeight, 0.1, 1000);
-  camera.position.set(0,0,6);
-  const renderer = new THREE.WebGLRenderer({antialias:true, alpha:true});
-  renderer.setSize(container.clientWidth, container.clientHeight);
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-  container.appendChild(renderer.domElement);
-
-  // layered nebula planes (11D illusion: multiple subtly moving layers)
-  const nebGroup = new THREE.Group();
-  for(let i=0;i<8;i++){
-    const g = new THREE.PlaneGeometry(16,9,1,1);
-    const mat = new THREE.MeshBasicMaterial({ color: new THREE.Color(hsl(${200+i*10},100%,${12+i*3}%)), transparent:true, opacity:0.06 + i*0.02, blending: THREE.AdditiveBlending, side: THREE.DoubleSide });
-    const m = new THREE.Mesh(g, mat);
-    m.position.z = -i*0.6 - 1;
-    m.rotation.z = Math.PI*0.02*i;
-    nebGroup.add(m);
-  }
-  scene.add(nebGroup);
-
-  // central energy core (glowing sphere with wobble)
-  const coreGeo = new THREE.SphereGeometry(1.1, 64, 64);
-  const coreMat = new THREE.MeshStandardMaterial({ color:0x00e8ff, emissive:0x003355, emissiveIntensity:2.8, metalness:0.3, roughness:0.2, transparent:true });
-  const core = new THREE.Mesh(coreGeo, coreMat);
-  scene.add(core);
-
-  // holographic shell
-  const shell = new THREE.Mesh(new THREE.SphereGeometry(1.4,32,32), new THREE.MeshBasicMaterial({ color:0xb46bff, wireframe:true, opacity:0.18, transparent:true }));
-  scene.add(shell);
-
-  // star cloud (points)
-  const starCount = 2500;
-  const pos = new Float32Array(starCount*3);
-  for(let i=0;i<pos.length;i++){ pos[i] = (Math.random()-0.5)*80 }
-  const starsGeo = new THREE.BufferGeometry(); starsGeo.setAttribute('position', new THREE.BufferAttribute(pos,3));
-  const starsMat = new THREE.PointsMaterial({ color:0x00f0ff, size:0.02, transparent:true, opacity:0.85 });
-  const stars = new THREE.Points(starsGeo, starsMat);
-  scene.add(stars);
-
-  // lights
-  const p1 = new THREE.PointLight(0x00f0ff, 1.8, 200); p1.position.set(6,3,6); scene.add(p1);
-  const p2 = new THREE.PointLight(0xb46bff, 1.2, 120); p2.position.set(-4,-3,6); scene.add(p2);
-
-  // mouse parallax
-  let mx=0,my=0;
-  document.addEventListener('mousemove', (e)=>{ mx = (e.clientX/window.innerWidth)*2-1; my = (e.clientY/window.innerHeight)*2-1; });
-
-  // resize
-  window.addEventListener('resize', ()=>{ renderer.setSize(container.clientWidth, container.clientHeight); camera.aspect = container.clientWidth/container.clientHeight; camera.updateProjectionMatrix(); });
-
-  // animate
-  let time = 0;
-  function animate(){
-    requestAnimationFrame(animate);
-    time += 0.005;
-    core.rotation.y += 0.01; core.scale.setScalar(1 + Math.sin(time*2)*0.03);
-    shell.rotation.x += 0.003; shell.rotation.y += 0.004;
-    stars.rotation.y += 0.0008;
-    nebGroup.children.forEach((ch, idx)=>{ ch.rotation.z += 0.0005 * (idx+1); ch.position.x = Math.sin(time*0.05*(idx+1))*0.3; });
-    camera.position.x += (mx*0.6 - camera.position.x)*0.04;
-    camera.position.y += (-my*0.35 - camera.position.y)*0.04;
-    renderer.render(scene, camera);
-  }
-  animate();
-})();
-
-/* ---------- Starfield + occasional meteors (DOM) ---------- */
-(function starfield(){
-  const canvas = document.createElement('canvas'); canvas.id='sf'; canvas.style.position='absolute'; canvas.style.inset='0'; canvas.style.zIndex='2'; canvas.style.pointerEvents='none';
-  document.body.appendChild(canvas);
-  const ctx = canvas.getContext('2d');
-  function resize(){ canvas.width = innerWidth; canvas.height = innerHeight; }
-  window.addEventListener('resize', resize); resize();
-  const stars = [];
-  for(let i=0;i<300;i++){ stars.push({x:Math.random()*canvas.width, y:Math.random()*canvas.height, r: Math.random()*1.2, v:0.1+Math.random()*0.6}) }
-  function draw(){
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-    for(const s of stars){ ctx.beginPath(); ctx.fillStyle = rgba(255,255,255,${0.06 + s.r*0.5}); ctx.arc(s.x,s.y,s.r,0,Math.PI*2); ctx.fill(); s.x -= s.v; if(s.x < -10) { s.x = canvas.width + 10; s.y = Math.random()*canvas.height } }
-    requestAnimationFrame(draw);
-  }
-  draw();
-  // meteors
-  setInterval(()=> {
-    const m = document.createElement('div'); m.className='meteor'; m.style.position='fixed'; m.style.zIndex=999; m.style.pointerEvents='none';
-    const left = Math.random()*90 + '%'; m.style.left = left; m.style.top = '-10%'; m.style.width='2px'; m.style.height='100px';
-    m.style.background='linear-gradient(180deg, rgba(255,255,255,0.9), rgba(0,240,255,0.0))'; m.style.transform = rotate(${25+Math.random()*60}deg);
-    document.body.appendChild(m);
-    const dur = 1000 + Math.random()*1400;
-    m.animate([{transform: m.style.transform, top:'-10%'},{transform: m.style.transform, top:'110%'}], {duration:dur, easing:'linear'});
-    setTimeout(()=> m.remove(), dur+50);
-  }, 3500);
-})();
-
-/* ---------- Visitors Globe (mini simulated) ---------- */
-(function visitorsMini(){
-  const vwrap = document.createElement('div'); vwrap.style.position='fixed'; vwrap.style.right='20px'; vwrap.style.bottom='120px'; vwrap.style.zIndex=60; vwrap.style.pointerEvents='none';
-  vwrap.innerHTML = <canvas id="visCanvas" width="160" height="120" style="width:160px;height:120px;border-radius:8px;filter:drop-shadow(0 8px 20px rgba(0,0,0,0.6));"></canvas>;
-  document.body.appendChild(vwrap);
-  const c = document.getElementById('visCanvas'), ctx = c.getContext('2d');
-  function draw(){ ctx.clearRect(0,0,c.width,c.height); ctx.beginPath(); ctx.arc(80,60,38,0,Math.PI*2); ctx.fillStyle='rgba(0,240,255,0.03)'; ctx.fill();
-    const now = Date.now(); for(let i=0;i<6;i++){ const a = (now/1000 + i) * (0.6 + i*0.2); const x = 80 + Math.cos(a)(28 - i*3); const y = 60 + Math.sin(a)(16 + i*2); ctx.beginPath(); ctx.fillStyle = rgba(0,240,255,${0.22 + (i%2)*0.24}); ctx.arc(x,y,2.8,0,Math.PI*2); ctx.fill(); } requestAnimationFrame(draw); }
-  draw();
-})();
-
-/* ---------- DeepMind AI mock (voice + text) ---------- */
-const aiReply = $('#aiReply'); const aiInput = $('#aiInput'); const aiStatus = $('#aiStatus');
-$('#askBtn')?.addEventListener('click', processQuery);
-document.getElementById('micBtn')?.addEventListener('click', startVoiceRecognition);
-
-function processQuery(){
-  const q = aiInput.value.trim();
-  if(!q){ aiReply.textContent = "Try: 'Check my speed' or 'Recommend a plan'."; return; }
-  aiReply.textContent = "DeepMind analyzing…";
-  aiStatus.textContent = "DeepMind: processing";
-  setTimeout(()=> {
-    if(/speed|ping/i.test(q)){
-      aiReply.innerHTML = Simulated Speed: <strong>${Math.round(window.simSpeed||350)} Mbps</strong> • Ping: <strong>${Math.round(window.simPing||22)} ms</strong>;
-    } else if(/recommend|best|plan/i.test(q)){
-      const rec = (window.simSpeed||350) < 500 ? 'Wave Titan (500 Mbps)' : 'Wave Infinity (1 Gbps)';
-      aiReply.innerHTML = Recommendation: <strong>${rec}</strong> — AI Boost available;
-    } else if(/ar/i.test(q)){
-      aiReply.textContent = "AR Mock: open camera & follow on-screen guide.";
-    } else {
-      aiReply.textContent = "DeepMind: I can check speed, recommend plans, or open AR mock.";
-    }
-    aiStatus.textContent = "DeepMind: ready";
-  }, 900);
-}
-
-/* speech recognition (if available) */
-function startVoiceRecognition(){
-  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if(!SpeechRecognition){ aiReply.textContent='Voice not supported in this browser.'; return; }
-  const r = new SpeechRecognition(); r.lang = 'en-US'; r.interimResults=false;
-  aiReply.textContent = 'Listening…';
-  r.start();
-  r.onresult = (e)=>{ const t = e.results[0][0].transcript; aiInput.value = t; processQuery(); }
-  r.onerror = ()=> { aiReply.textContent = 'Microphone not accessible.' }
-}
-
-/* voice intro toggle */
-let voiceOn=false;
-$('#voiceToggle')?.addEventListener('click', ()=>{
-  voiceOn = !voiceOn; $('#voiceToggle').textContent = voiceOn? '🔊 Voice On' : '🔈 Voice';
-  if(voiceOn) speakText("Welcome to Deep Wave Multiverse. DeepMind online.");
-});
-function speakText(txt){ if(!('speechSynthesis' in window)) return; const u = new SpeechSynthesisUtterance(txt); u.lang='en-US'; u.rate=1; u.pitch=1; speechSynthesis.speak(u); }
-
-/* ---------- Simulated speed & ping engine ---------- */
-window.simSpeed = 400; window.simPing = 18;
+// Simulated network metrics
+let simSpeed = 1200, simPing = 9;
 setInterval(()=> {
-  window.simSpeed += (Math.random()-0.5)*60; window.simSpeed = Math.max(80, Math.min(2000, window.simSpeed));
-  window.simPing += (Math.random()-0.5)*4; window.simPing = Math.max(4, Math.min(240, window.simPing));
-  $('#speedVal').textContent = Math.round(window.simSpeed); $('#pingVal').textContent = Math.round(window.simPing);
-}, 900);
+  simSpeed += (Math.random()-0.5)*30; simSpeed = Math.max(50, Math.min(50000, simSpeed));
+  simPing += (Math.random()-0.5)*2; simPing = Math.max(1, Math.min(999, simPing));
+  speedVal.textContent = Math.round(simSpeed); pingVal.textContent = Math.round(simPing);
+}, 1200);
 
-/* ---------- Theme presets (galaxy/dawn/nebula) ---------- */
-const themeBtn = $('#themeBtn');
-const themes = ['galaxy','dawn','nebula']; let th = 0;
-themeBtn?.addEventListener('click', ()=> {
-  th = (th+1)%themes.length; document.documentElement.setAttribute('data-theme', themes[th]);
-  // quick palette tweak (simple)
-  if(themes[th]==='dawn'){ document.body.style.background = 'linear-gradient(180deg,#fff9f0,#e9eefb)'; document.body.style.color='#041027'; } else { document.body.style.background='linear-gradient(180deg,var(--bg1),var(--bg2))'; document.body.style.color=''; }
-});
+// THREE.js scene
+let renderer, scene, camera, composer;
+let uniforms;
+let particleSystem;
+let clock = new THREE.Clock();
+let mouse = new THREE.Vector2(0.5,0.5);
+let audioCtx, analyser, analyserData, micStream;
+let isMusicOn = false;
 
-/* ---------- AR Mock (camera overlay) ---------- */
-$('#arBtn')?.addEventListener('click', async ()=>{
-  if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){ alert('Camera not supported'); return; }
-  const vwrap = document.createElement('div'); vwrap.className='overlay'; document.body.appendChild(vwrap);
-  vwrap.innerHTML = <video id="camvid" autoplay playsinline style="width:100%;height:100%;object-fit:cover;border-radius:12px"></video><button class="btn outline" id="closeCam" style="position:absolute;top:18px;right:18px;z-index:999">Close AR</button>;
-  const vid = document.getElementById('camvid');
-  try{ const stream = await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}}); vid.srcObject = stream; }
-  catch(e){ alert('Camera access denied'); vwrap.remove(); return; }
-  // overlay hologram
-  const holo = document.createElement('div'); holo.style.position='absolute'; holo.style.left='50%'; holo.style.top='30%'; holo.style.transform='translateX(-50%)'; holo.style.zIndex=999; holo.innerHTML = <div style="padding:12px 18px;background:rgba(0,0,0,0.3);border-radius:12px;border:1px solid rgba(255,255,255,0.06);backdrop-filter:blur(8px)">🔮 Deep Wave Hologram (Mock)</div>; vwrap.appendChild(holo);
-  $('#closeCam')?.addEventListener('click', ()=>{ const tracks = vid.srcObject?.getTracks()||[]; tracks.forEach(t=>t.stop()); vwrap.remove(); });
-});
+init();
+animate();
 
-/* ---------- Spin & Win ---------- */
-function startSpin(){ $('#spinModal').classList.remove('hidden'); drawSpinWheel(); }
-function closeSpin(){ $('#spinModal').classList.add('hidden'); $('#spinResult').textContent=''; }
-function drawSpinWheel(){
-  const canvas = document.getElementById('spinCanvas'); if(!canvas) return; const ctx = canvas.getContext('2d');
-  const prizes = ['₹100 OFF','Extra 50GB','Free Router','AI Boost','10% OFF','Free Install','₹50 OFF','Surprise'];
-  const len = prizes.length; const cx=160,cy=160,r=140;
-  // draw slices
-  for(let i=0;i<len;i++){
-    const a0 = (i/len)*Math.PI*2; const a1 = ((i+1)/len)*Math.PI*2;
-    ctx.beginPath(); ctx.moveTo(cx,cy); ctx.arc(cx,cy,r,a0,a1); ctx.closePath();
-    ctx.fillStyle = i%2? 'rgba(0,240,255,0.08)' : 'rgba(155,107,255,0.06)'; ctx.fill();
-    ctx.save(); ctx.translate(cx,cy); ctx.rotate((a0+a1)/2); ctx.fillStyle='#fff'; ctx.fillText(prizes[i], r*0.6, 6); ctx.restore();
+// ---------- init ----------
+function init(){
+  // Renderer
+  renderer = new THREE.WebGLRenderer({ canvas, antialias:true, alpha:true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.outputEncoding = THREE.sRGBEncoding;
+
+  // Scene + camera
+  scene = new THREE.Scene();
+  camera = new THREE.PerspectiveCamera(45, window.innerWidth/window.innerHeight, 0.1, 1000);
+  camera.position.set(0,0,6);
+
+  // Fullscreen shader quad (nebula)
+  const quadGeo = new THREE.PlaneGeometry(2,2);
+  uniforms = {
+    u_time: { value: 0 },
+    u_resolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
+    u_mouse: { value: new THREE.Vector2(0.5,0.5) },
+    u_audio: { value: 0.0 },
+    u_warp: { value: 0.0 },
+    u_theme: { value: 0 }
+  };
+
+  const fragment = `
+    precision highp float;
+    uniform vec2 u_resolution;
+    uniform float u_time;
+    uniform vec2 u_mouse;
+    uniform float u_audio;
+    uniform float u_warp;
+    uniform float u_theme;
+
+    #define ITER 6
+
+    float hash(vec3 p){ return fract(sin(dot(p, vec3(12.9898,78.233,37.719)))*43758.5453); }
+    float noise(vec3 p){
+      vec3 i = floor(p);
+      vec3 f = fract(p);
+      f = f*f*(3.0-2.0*f);
+      float n = mix(
+        mix(mix(hash(i+vec3(0,0,0)), hash(i+vec3(1,0,0)), f.x),
+            mix(hash(i+vec3(0,1,0)), hash(i+vec3(1,1,0)), f.x), f.y),
+        mix(mix(hash(i+vec3(0,0,1)), hash(i+vec3(1,0,1)), f.x),
+            mix(hash(i+vec3(0,1,1)), hash(i+vec3(1,1,1)), f.x), f.y),
+        f.z);
+      return n;
+    }
+
+    float fbm(vec3 p){
+      float v=0.0; float a=0.6; float f=1.0;
+      for(int i=0;i<ITER;i++){
+        v += a*noise(p*f);
+        f *= 2.0; a *= 0.55;
+      }
+      return v;
+    }
+
+    void main(){
+      vec2 uv = gl_FragCoord.xy / u_resolution.xy;
+      vec2 p = uv - 0.5;
+      p.x *= u_resolution.x / u_resolution.y;
+      vec3 coord = vec3(p*3.0, u_time*0.08 + u_warp*0.5);
+      float n = fbm(coord);
+      float intensity = smoothstep(0.25, 0.9, n*1.1);
+      float pulse = 1.0 + u_audio * 2.0;
+      vec3 col = vec3(0.02,0.04,0.08);
+      // theme driven palettes
+      if(u_theme < 0.5){
+        col += vec3(0.0, 0.6, 0.95) * pow(intensity,1.6) * pulse;
+        col += vec3(0.8,0.35,1.0) * pow(n*0.5,2.0) * (0.2 + u_mouse.x*0.8);
+      } else if(u_theme < 1.5){
+        col += vec3(0.9,0.4,0.1) * pow(intensity,1.4) * pulse;
+        col += vec3(1.0,0.6,0.2) * pow(n*0.5,1.8) * (0.2 + u_mouse.x*0.6);
+      } else {
+        col += vec3(0.4,0.1,0.9) * pow(intensity,1.6) * pulse;
+        col += vec3(0.6,0.3,0.9) * pow(n*0.5,2.0) * (0.2 + u_mouse.x*0.7);
+      }
+
+      // small stars
+      float s = fract(sin(dot(uv, vec2(12.9898,78.233))) * 43758.5453);
+      float star = smoothstep(0.9996, 1.0, s + pow(n,3.0)*0.0008);
+
+      vec3 final = col + vec3(star);
+
+      float vig = smoothstep(0.8,0.2, length(p)*1.2);
+      final *= vig;
+      final = 1.0 - exp(-final * 1.5);
+      final = pow(final, vec3(0.85));
+      gl_FragColor = vec4(final, 1.0);
+    }
+  `;
+  const mat = new THREE.ShaderMaterial({
+    fragmentShader: fragment,
+    vertexShader: 'void main(){ gl_Position = vec4(position,1.0); }',
+    uniforms, depthTest:false, depthWrite:false
+  });
+  const quad = new THREE.Mesh(quadGeo, mat);
+  scene.add(quad);
+
+  // particle system (foreground)
+  const initialCount = parseInt(particleCountInput?.value || 600);
+  createParticleSystem(initialCount);
+
+  // pointer events
+  window.addEventListener('pointermove', onPointerMove);
+  window.addEventListener('resize', onResize);
+  canvas.addEventListener('click', onClick);
+  canvas.addEventListener('dblclick', onDoubleClick);
+  window.addEventListener('keydown', onKeyDown);
+
+  // UI events
+  micBtn.addEventListener('click', startMic);
+  musicBtn.addEventListener('click', toggleMusic);
+  warpBtn.addEventListener('click', warpPulse);
+  xrBtn.addEventListener('click', startXRPlaceholder);
+  themeSelect.addEventListener('change', e=> {
+    const val = e.target.value;
+    uniforms.u_theme.value = (val === 'galaxy')?0:(val==='dawn'?1:2);
+  });
+
+  particleCountInput?.addEventListener('input', (e)=> {
+    recreateParticles(parseInt(e.target.value));
+  });
+
+  document.getElementById('resetBtn')?.addEventListener('click', () => {
+    recreateParticles(parseInt(particleCountInput?.value || 600));
+    uniforms.u_warp.value = 0;
+  });
+
+  // audio setup (fallback oscillator)
+  setupAudio();
+}
+
+// ---------- particle system ----------
+function createParticleSystem(count){
+  if(particleSystem){
+    scene.remove(particleSystem);
+    particleSystem.geometry.dispose();
+    particleSystem.material.dispose();
   }
-  // spin logic
-  $('#spinBtn').onclick = ()=> {
-    $('#spinResult').textContent = 'Spinning…';
-    let rot = 0; const target = Math.random()*Math.PI*2 + 6*Math.PI;
-    const start = performance.now();
-    function anim(now){
-      const t = (now-start)/2000; const ease = (--t)*t*t+1; const cur = ease*target;
-      canvas.style.transform = rotate(${cur}rad);
-      if(now-start < 2200) requestAnimationFrame(anim); else {
-        const final = (target%(Math.PI*2)); const idx = Math.floor((len - (final/(Math.PI*2))*len)%len); $('#spinResult').textContent = You won: ${prizes[idx]}; 
+  const geo = new THREE.BufferGeometry();
+  const pos = new Float32Array(count*3);
+  const vel = new Float32Array(count*3);
+  for(let i=0;i<count;i++){
+    pos[i*3] = (Math.random()-0.5)*8;
+    pos[i*3+1] = (Math.random()-0.5)*6;
+    pos[i*3+2] = (Math.random()-0.5)*4;
+    vel[i*3] = (Math.random()-0.5)*0.01;
+    vel[i*3+1] = (Math.random()-0.5)*0.01;
+    vel[i*3+2] = (Math.random()-0.5)*0.01;
+  }
+  geo.setAttribute('position', new THREE.BufferAttribute(pos,3));
+  geo.setAttribute('vel', new THREE.BufferAttribute(vel,3));
+  const mat = new THREE.PointsMaterial({ color:0x66ffff, size:0.03, transparent:true, opacity:0.95 });
+  particleSystem = new THREE.Points(geo, mat);
+  scene.add(particleSystem);
+}
+
+function recreateParticles(n){
+  createParticleSystem(n);
+  console.log('particles recreated:', n);
+}
+
+// ---------- audio ----------
+async function setupAudio(){
+  try {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    analyser = audioCtx.createAnalyser();
+    analyser.fftSize = 256;
+    analyser.smoothingTimeConstant = 0.85;
+    analyserData = new Uint8Array(analyser.frequencyBinCount);
+
+    // tiny inaudible oscillator as fallback driver so visuals animate even without mic/music
+    const osc = audioCtx.createOscillator();
+    const g = audioCtx.createGain(); g.gain.value = 0.00008;
+    osc.type = 'sine'; osc.frequency.value = 40;
+    osc.connect(g); g.connect(analyser); analyser.connect(audioCtx.destination);
+    osc.start();
+    // store source node for music toggle
+    window.__deepwave_osc = { osc, gain: g };
+  } catch (e){
+    console.warn('Audio init failed', e);
+  }
+}
+
+async function startMic(){
+  if(!audioCtx) await setupAudio();
+  if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { alert('Mic not supported'); return; }
+  try {
+    micStream = await navigator.mediaDevices.getUserMedia({ audio:true, video:false });
+    const src = audioCtx.createMediaStreamSource(micStream);
+    src.connect(analyser);
+    // optional: set user gain from UI
+    alert('Microphone enabled for audio-reactive visuals.');
+  } catch (e){
+    console.warn('Mic denied', e); alert('Microphone access denied.');
+  }
+}
+
+function toggleMusic(){
+  if(!audioCtx) { setupAudio(); return; }
+  const oscObj = window.__deepwave_osc;
+  if(!oscObj) return;
+  isMusicOn = !isMusicOn;
+  if(isMusicOn){ oscObj.osc.frequency.value = 120; musicBtn.textContent = '🔇 Music'; }
+  else { oscObj.osc.frequency.value = 40; musicBtn.textContent = '🔊 Music'; }
+}
+
+// ---------- interactions ----------
+let pointerX = 0, pointerY = 0;
+function onPointerMove(e){
+  const x = e.clientX / window.innerWidth;
+  const y = 1 - (e.clientY / window.innerHeight);
+  mouse.set(x,y);
+  uniforms.u_mouse.value.set(x,y);
+  pointerX = e.clientX; pointerY = e.clientY;
+  spawnTrailDot(e.clientX, e.clientY);
+}
+
+function spawnTrailDot(x,y){
+  const el = document.createElement('div');
+  el.style.position='fixed'; el.style.left=(x-8)+'px'; el.style.top=(y-8)+'px';
+  el.style.width='16px'; el.style.height='16px'; el.style.borderRadius='50%';
+  el.style.background='radial-gradient(circle, rgba(0,240,255,0.95), rgba(180,107,255,0.6))';
+  el.style.pointerEvents='none'; el.style.zIndex=70; el.style.mixBlendMode='screen';
+  trailContainer.appendChild(el);
+  el.animate([{transform:'scale(1)',opacity:1},{transform:'scale(0.2)',opacity:0}],{duration:700,easing:'cubic-bezier(.2,.8,.2,1)'});
+  setTimeout(()=> el.remove(),760);
+}
+
+function onClick(e){
+  // supernova: push particle velocities outward from click
+  const rect = canvas.getBoundingClientRect();
+  const nx = ((e.clientX - rect.left)/rect.width)*2 - 1;
+  const ny = -((e.clientY - rect.top)/rect.height)*2 + 1;
+  explodeParticles(nx*4, ny*3);
+}
+
+function onDoubleClick(){
+  reformToLogo('DEEP WAVE');
+}
+
+function onKeyDown(e){
+  if(e.key === 'p' || e.key === 'P') {
+    alert('Plans: Wave Nano (100 Mbps), Wave Titan (500 Mbps), Wave Infinity (1 Gbps)');
+  }
+  if(e.key === '`') adminPanel.classList.toggle('hidden');
+}
+
+// particle helpers
+function explodeParticles(cx, cy){
+  const pos = particleSystem.geometry.attributes.position.array;
+  const vel = particleSystem.geometry.attributes.vel.array;
+  for(let i=0;i<pos.length;i+=3){
+    const dx = pos[i] - cx;
+    const dy = pos[i+1] - cy;
+    const dz = pos[i+2];
+    const dist = Math.sqrt(dx*dx + dy*dy + dz*dz) + 0.001;
+    const power = 0.6 + Math.random()*1.3;
+    vel[i] = dx/dist * power;
+    vel[i+1] = dy/dist * power;
+    vel[i+2] = dz/dist * power;
+  }
+}
+
+// reform to text: map image pixels to particle targets
+function reformToLogo(text){
+  const c = document.createElement('canvas'); c.width=800; c.height=200;
+  const ctx = c.getContext('2d');
+  ctx.fillStyle='black'; ctx.fillRect(0,0,c.width,c.height);
+  ctx.font = 'bold 110px Orbitron, sans-serif';
+  ctx.textAlign='center'; ctx.fillStyle='white'; ctx.fillText(text, c.width/2, c.height/1.35);
+  const data = ctx.getImageData(0,0,c.width,c.height).data;
+  const points = [];
+  for(let y=0;y<c.height;y+=6){
+    for(let x=0;x<c.width;x+=6){
+      const idx = (y*c.width + x)*4;
+      if(data[idx] > 200){
+        const nx = (x - c.width/2)/120;
+        const ny = (c.height/2 - y)/120;
+        points.push([nx, ny, (Math.random()-0.5)*0.2]);
+        if(points.length >= particleSystem.geometry.attributes.position.count) break;
       }
     }
-    requestAnimationFrame(anim);
-  };
+    if(points.length >= particleSystem.geometry.attributes.position.count) break;
+  }
+  // animate to points
+  const pos = particleSystem.geometry.attributes.position.array;
+  let step=0; const max = 90;
+  const intv = setInterval(()=> {
+    step++;
+    for(let i=0;i<points.length;i++){
+      const pi = i*3;
+      pos[pi] += (points[i][0] - pos[pi]) * 0.12;
+      pos[pi+1] += (points[i][1] - pos[pi+1]) * 0.12;
+      pos[pi+2] += (points[i][2] - pos[pi+2]) * 0.12;
+    }
+    particleSystem.geometry.attributes.position.needsUpdate = true;
+    if(step > max) clearInterval(intv);
+  }, 30);
 }
 
-/* ---------- Speed Test simulator (fake but smooth) ---------- */
-$('#runSpeed')?.addEventListener('click', ()=> {
-  $('#aiReply').textContent = 'Running simulated speed test…';
-  const res = {down:0, up:0, ping:0}; let step=0;
-  const iv = setInterval(()=> {
-    step++; res.down = Math.round(Math.min(2000, step*(30+Math.random()80))); res.up = Math.round(res.down(0.2+Math.random()*0.6)); res.ping = Math.round(Math.max(3, 60 - step*1.5 + Math.random()*8));
-    $('#aiReply').innerHTML = Speed: <strong>${res.down} Mbps</strong> • Ping: <strong>${res.ping} ms</strong>;
-    if(step>25){ clearInterval(iv); $('#aiReply').innerHTML += '<br><em>Test complete — results are simulated.</em>'; }
-  }, 180);
-});
-
-/* ---------- Globe show (full-screen simulation) ---------- */
-$('#globeBtn')?.addEventListener('click', ()=> {
-  alert('Visitors Globe simulated in the hero corner. Full globe requires advanced Three.js setup; contact for pro integration.');
-});
-
-/* ---------- Portal entrance (visual) ---------- */
-function openPortal(){
-  speakText('Opening DeepVerse portal'); document.body.classList.add('portal');
-  setTimeout(()=> { alert('Welcome to DeepVerse — simulated portal entrance.'); document.body.classList.remove('portal'); }, 900);
+// ---------- XR placeholder ----------
+function startXRPlaceholder(){
+  if(!navigator.xr){ alert('WebXR not supported in this browser/device.'); return; }
+  // In production: initialize THREE.WebXRManager or R3F; this is a placeholder to request session
+  navigator.xr.isSessionSupported('immersive-ar').then(supported => {
+    if(!supported) { alert('XR supported but immersive-ar not available.'); return; }
+    navigator.xr.requestSession('immersive-ar', { requiredFeatures: ['local-floor'] }).then(session => {
+      alert('XR session started (placeholder). For full XR integrate THREE.WebXRManager in production.');
+      session.end();
+    }).catch(()=> alert('XR session failed.'));
+  });
 }
 
-/* ---------- Enquiry & contact ---------- */
-function enquire(plan){ alert(Thanks! Enquiry received for ${plan}. We will contact you.); }
-function submitContact(e){ e.preventDefault(); alert('Thank you — message received.'); e.target.reset(); }
-
-/* ---------- Tour (simple) ---------- */
-function startTour(){
-  const steps = [
-    'This is the 11D holographic hero.',
-    'AI Hub: Ask DeepMind for recommendations.',
-    'Tools: Try AR Mock and Speed Test.',
-    'Spin the Galaxy Wheel for rewards.'
-  ];
-  let s=0; (function step(){ if(s>=steps.length) { alert('Tour finished — enjoy Deep Wave!'); return; } alert(steps[s]); s++; setTimeout(step,400); })();
+// ---------- resize ----------
+function onResize(){
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  camera.aspect = window.innerWidth/window.innerHeight; camera.updateProjectionMatrix();
+  uniforms.u_resolution.value.set(window.innerWidth, window.innerHeight);
 }
 
-/* ---------- simple keyboard voice nav ---------- */
-document.addEventListener('keydown', (e)=> {
-  if(e.key === 'p') location.href='#plans';
-  if(e.key === 'v') { voiceOn = !voiceOn; if(voiceOn) speakText('Voice enabled'); }
-});
+// ---------- animate ----------
+function animate(){
+  requestAnimationFrame(animate);
+  const t = clock.getElapsedTime();
+  uniforms.u_time.value = t;
 
-/* ---------- End of script ---------- */
+  // audio analysis
+  if(analyser && analyserData){
+    analyser.getByteFrequencyData(analyserData);
+    let sum=0;
+    for(let i=0;i<32;i++) sum += analyserData[i];
+    let avg = sum / (32*255);
+    avg *= (parseFloat(audioGainInput.value) || 1.0);
+    uniforms.u_audio.value = avg;
+    // small automatic warp on heavy bass
+    if(avg > 0.18) uniforms.u_warp.value = Math.min(1.2, uniforms.u_warp.value + avg*0.03);
+    else uniforms.u_warp.value = Math.max(0, uniforms.u_warp.value * 0.98);
+  }
+
+  // particle physics simple integrator
+  const pos = particleSystem.geometry.attributes.position.array;
+  const vel = particleSystem.geometry.attributes.vel.array;
+  for(let i=0;i<pos.length;i+=3){
+    vel[i] *= 0.992; vel[i+1] *= 0.992; vel[i+2] *= 0.992;
+    pos[i] += vel[i]; pos[i+1] += vel[i+1]; pos[i+2] += vel[i+2];
+    // gentle pull-to-center
+    pos[i] += -pos[i]*0.0006; pos[i+1] += -pos[i+1]*0.0006;
+  }
+  particleSystem.geometry.attributes.position.needsUpdate = true;
+
+  // subtle camera parallax based on mouse
+  const cx = (mouse.x - 0.5) * 2.0, cy = (mouse.y - 0.5) * 2.0;
+  camera.position.x += (cx*0.6 - camera.position.x) * 0.02;
+  camera.position.y += (cy*0.35 - camera.position.y) * 0.02;
+
+  renderer.render(scene, camera);
+}
+
+// ---------- finalize: create particle system in scene  ----------
+function createParticleSystem(count){
+  // called from init; ensures particleSystem exists
+  if(particleSystem){ scene.remove(particleSystem); }
+  const geometry = new THREE.BufferGeometry();
+  const positions = new Float32Array(count*3);
+  const velocities = new Float32Array(count*3);
+  for(let i=0;i<count;i++){
+    positions[i*3] = (Math.random()-0.5)*8;
+    positions[i*3+1] = (Math.random()-0.5)*6;
+    positions[i*3+2] = (Math.random()-0.5)*4;
+    velocities[i*3] = (Math.random()-0.5)*0.01;
+    velocities[i*3+1] = (Math.random()-0.5)*0.01;
+    velocities[i*3+2] = (Math.random()-0.5)*0.01;
+  }
+  geometry.setAttribute('position', new THREE.BufferAttribute(positions,3));
+  geometry.setAttribute('vel', new THREE.BufferAttribute(velocities,3));
+  const material = new THREE.PointsMaterial({ size:0.03, color:0x66ffff, transparent:true, opacity:0.95 });
+  particleSystem = new THREE.Points(geometry, material);
+  scene.add(particleSystem);
+}
+
+// create with default count
+createParticleSystem(parseInt(particleCountInput?.value || 600));
+
+// ---------- small service-worker hint (register) ----------
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('sw.js').catch(e => console.warn('SW reg failed', e));
+}
+
+// END OF FILE
