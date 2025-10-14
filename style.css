@@ -1,80 +1,50 @@
-/* DEEP WAVE — Multiverse 11D+ CSS (compact but powerful) */
-
+/* DEEP WAVE — Ultra Supreme CSS */
 :root{
-  --bg1:#020116; --bg2:#071129;
+  --bg-1:#020218; --bg-2:#050735;
   --accent1:#00f0ff; --accent2:#b46bff;
-  --muted:#9fb2c9; --glass:rgba(255,255,255,0.04);
-  --card:#071226;
+  --muted:rgba(220,240,255,0.8);
+  --glass: rgba(255,255,255,0.04);
 }
 *{box-sizing:border-box}
-html,body{height:100%}
-body{
-  margin:0; font-family:Inter, system-ui, 'Orbitron', sans-serif;
-  background: radial-gradient(circle at 10% 10%, rgba(3,10,30,0.6), transparent 10%),
-             linear-gradient(180deg,var(--bg1),var(--bg2));
-  color:#e6f9ff; -webkit-font-smoothing:antialiased; overflow-x:hidden;
+html,body,#app{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial}
+body{background:linear-gradient(180deg,var(--bg-1),var(--bg-2));overflow:hidden;color:#e8fbff}
+
+/* canvas stretches */
+canvas{display:block;width:100vw;height:100vh}
+
+/* UI overlay */
+.ui{position:fixed;z-index:60;display:flex;gap:10px;align-items:center}
+.top-left{left:18px;top:16px}
+.top-right{right:18px;top:16px}
+.bottom-left{left:18px;bottom:18px}
+
+.brand{padding:8px 12px;border-radius:10px;background:linear-gradient(90deg,rgba(0,240,255,0.06),rgba(180,107,255,0.04));border:1px solid rgba(255,255,255,0.04);font-weight:700;backdrop-filter:blur(6px)}
+.brand span{font-weight:600;color:var(--muted);font-size:0.9rem;margin-left:8px}
+
+.chip{
+  padding:8px 12px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);
+  background:transparent;color:var(--muted);cursor:pointer;font-weight:700;
+  backdrop-filter: blur(6px);
 }
+.chip:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(0,0,0,0.5)}
 
-/* NAV */
-.nav{position:sticky;top:0;z-index:100;display:flex;justify-content:space-between;align-items:center;padding:12px 28px;background:linear-gradient(180deg, rgba(0,0,0,0.25), rgba(0,0,0,0.08));backdrop-filter:blur(8px);border-bottom:1px solid rgba(255,255,255,0.02)}
-.brand .logo{font-weight:900;color:var(--accent1);letter-spacing:0.8px}
-.brand .logo span{color:var(--accent2)}
-.links{display:flex;gap:12px;align-items:center}
-.links a{color:var(--muted);text-decoration:none;padding:6px 8px;border-radius:8px}
-.chip{padding:6px 10px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:var(--muted);cursor:pointer}
+.meter{padding:10px 14px;border-radius:12px;background:linear-gradient(180deg,rgba(0,0,0,0.28),rgba(255,255,255,0.02));border:1px solid rgba(255,255,255,0.02)}
 
-/* HERO */
-.hero{display:flex;gap:28px;padding:48px;align-items:center;min-height:86vh;position:relative}
-.hero-left{flex:1;max-width:760px;z-index:20}
-.main-title{font-family:'Orbitron';font-size:2.2rem;margin:0;color:linear-gradient(90deg,var(--accent1),var(--accent2))}
-.main-title small{display:block;color:var(--muted);font-size:1rem;margin-top:8px}
-.lead{color:var(--muted);margin:18px 0}
-.cta-row{display:flex;gap:12px}
-.btn{cursor:pointer;border:0;padding:10px 18px;border-radius:12px;font-weight:700}
-.btn.primary{background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#001;box-shadow:0 12px 40px rgba(154,107,255,0.08)}
-.btn.outline{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted)}
-.btn.ghost{background:transparent;color:var(--accent1);border:1px dashed rgba(0,240,255,0.06)}
+.note{padding:8px 12px;border-radius:10px;background:rgba(0,0,0,0.25);font-size:0.95rem;color:rgba(230,250,255,0.85)}
 
-.meters{display:flex;gap:12px;margin-top:18px}
-.meter{background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));padding:8px 12px;border-radius:10px}
-.meter-label{font-size:0.75rem;color:var(--muted)}
-.speed-value{font-weight:900;color:var(--accent1)}
+/* trail elements */
+.trail{position:fixed;left:0;top:0;pointer-events:none;z-index:70}
 
-/* 11D container */
-.hero-3d{width:420px;height:360px;border-radius:16px;background:linear-gradient(180deg, rgba(0,0,0,0.25), rgba(255,255,255,0.02));box-shadow:0 30px 90px rgba(0,0,0,0.6);overflow:hidden;border:1px solid rgba(0,240,255,0.04)}
+/* admin panel */
+.admin{position:fixed;right:18px;bottom:18px;width:320px;border-radius:12px;background:linear-gradient(180deg,rgba(0,0,0,0.6),rgba(10,10,20,0.6));border:1px solid rgba(255,255,255,0.04);color:var(--muted);z-index:80;padding:12px}
+.admin.hidden{display:none}
+.admin-header{font-weight:800;margin-bottom:8px}
+.admin-body label{display:flex;justify-content:space-between;align-items:center;margin:8px 0;font-size:0.9rem}
+.small{padding:6px 10px;border-radius:8px;border:0;background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#001;font-weight:800;cursor:pointer}
 
-/* AI card */
-.ai-card{margin-top:18px;background:var(--card);padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,0.03);width:420px;box-shadow:0 12px 40px rgba(0,0,0,0.6)}
-.ai-title{font-weight:800;color:var(--accent2)}
-.ai-controls{display:flex;gap:8px;margin-top:10px}
-.ai-controls input{flex:1;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:inherit}
-
-/* sections */
-.section{padding:48px 36px;z-index:10}
-.plans-row{display:flex;gap:18px;flex-wrap:wrap;justify-content:center}
-.plan-card{width:260px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:18px;border-radius:12px;border:1px solid rgba(255,255,255,0.03);text-align:center}
-.plan-card.popular{transform:translateY(-8px);box-shadow:0 30px 80px rgba(155,107,255,0.06)}
-.price{font-size:1.2rem;color:var(--accent1);margin:8px 0}
-
-/* tools */
-.tools-grid{display:flex;gap:14px;flex-wrap:wrap;justify-content:center}
-.tool{background:var(--card);padding:16px;border-radius:12px;border:1px solid rgba(255,255,255,0.02);width:260px;text-align:center}
-
-/* overlays & modals */
-.overlay{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.6);z-index:999}
-.hidden{display:none}
-.onboard-card,.spin-card{background:linear-gradient(180deg,rgba(10,10,20,0.9),rgba(4,4,12,0.9));padding:18px;border-radius:12px;border:1px solid rgba(255,255,255,0.04);width:420px;text-align:center}
-.spin-card canvas{display:block;margin:10px auto}
-
-/* contact & footer */
-.contact form{display:flex;flex-direction:column;gap:10px;max-width:640px}
-.contact input,.contact textarea{padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:inherit}
-.footer{display:flex;justify-content:space-between;align-items:center;padding:18px 36px;border-top:1px solid rgba(255,255,255,0.02);color:var(--muted)}
-
-/* small responsive */
-@media (max-width:900px){
-  .hero{flex-direction:column;padding:26px}
-  .hero-3d{width:100%;height:360px}
-  .ai-card{width:100%}
-  .plans-row{flex-direction:column;align-items:center}
+/* responsive tweaks */
+@media (max-width:800px){
+  .brand{font-size:0.9rem}
+  .meter{display:none}
+  .admin{width:90%}
 }
