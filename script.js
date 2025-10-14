@@ -1,241 +1,284 @@
-/* DEEP WAVE — AI Hyper System JS
-   Features:
-   - auto tagline swap (two lines)
-   - starfield background
-   - orb particle visuals
-   - simulated speed + ping chart
-   - voice intro & mic input (SpeechRecognition if available)
-   - theme toggle (dark / light quick)
+/* DEEP WAVE — Multiverse ULTRA WLORD Infinity 11D+ JS
+   - 11D visual (Three.js layered nebula + energy core)
+   - starfield + meteors + visitors globe
+   - DeepMind mock AI (voice + text)
+   - AR mock (camera overlay)
+   - Spin-to-win, onboarding, theme presets
 */
 
-// ---------- basic text taglines -------------
-const lines = [
-  "Beyond World, Beyond Logic — The Internet of the Future.",
-  "Connecting Galaxies at the Speed of Thought — Deep Wave."
-];
-let li = 0;
-const headlineEl = document.getElementById('headlineLine');
-setInterval(()=> {
-  li = (li+1) % lines.length;
-  headlineEl.textContent = lines[li];
-}, 4200);
-
-// ---------- set year -------------
+/* ---------- basic UI helpers ---------- */
 document.getElementById('year').textContent = new Date().getFullYear();
+function $(s){return document.querySelector(s)}
+function $all(s){return document.querySelectorAll(s)}
 
-// ---------- starfield background ----------
-const starCanvas = document.getElementById('starfield');
-const starCtx = starCanvas.getContext('2d');
-function resizeStar() {
-  starCanvas.width = innerWidth;
-  starCanvas.height = innerHeight;
-}
-window.addEventListener('resize', resizeStar);
-resizeStar();
+/* ---------- Onboard ---------- */
+const onboard = $('#onboard');
+if(onboard){ onboard.classList.remove('hidden'); }
+$('#startTour')?.addEventListener('click', ()=> { onboard.classList.add('hidden'); startTour(); });
+$('#skipTour')?.addEventListener('click', ()=> onboard.classList.add('hidden'));
 
-const stars = [];
-for(let i=0;i<250;i++){
-  stars.push({
-    x: Math.random()*starCanvas.width,
-    y: Math.random()*starCanvas.height,
-    r: Math.random()*1.3,
-    v: 0.1 + Math.random()*0.6
-  });
-}
-function drawStars(){
-  starCtx.clearRect(0,0,starCanvas.width,starCanvas.height);
-  for(const s of stars){
-    starCtx.beginPath();
-    starCtx.fillStyle = rgba(255,255,255,${0.08 + s.r*0.6});
-    starCtx.arc(s.x, s.y, s.r, 0, Math.PI*2);
-    starCtx.fill();
-    s.x -= s.v;
-    if(s.x < -10){ s.x = starCanvas.width + 10; s.y = Math.random()*starCanvas.height }
+/* ---------- Title rotation ---------- */
+const titleLines = [
+  "Not just a Network — A Multiverse.",
+  "Where Reality Ends — Deep Wave Begins.",
+  "Beyond Dimensions, Beyond Limits."
+];
+let tI = 0;
+setInterval(()=> { tI=(tI+1)%titleLines.length; $('#titleLine').textContent = titleLines[tI]; }, 4200);
+
+/* ---------- 11D Universe (Three.js multi-layer) ---------- */
+(function initUniverse(){
+  const container = document.getElementById('hero-3d');
+  if(!container || typeof THREE === 'undefined') return;
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(50, container.clientWidth/container.clientHeight, 0.1, 1000);
+  camera.position.set(0,0,6);
+  const renderer = new THREE.WebGLRenderer({antialias:true, alpha:true});
+  renderer.setSize(container.clientWidth, container.clientHeight);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  container.appendChild(renderer.domElement);
+
+  // layered nebula planes (11D illusion: multiple subtly moving layers)
+  const nebGroup = new THREE.Group();
+  for(let i=0;i<8;i++){
+    const g = new THREE.PlaneGeometry(16,9,1,1);
+    const mat = new THREE.MeshBasicMaterial({ color: new THREE.Color(hsl(${200+i*10},100%,${12+i*3}%)), transparent:true, opacity:0.06 + i*0.02, blending: THREE.AdditiveBlending, side: THREE.DoubleSide });
+    const m = new THREE.Mesh(g, mat);
+    m.position.z = -i*0.6 - 1;
+    m.rotation.z = Math.PI*0.02*i;
+    nebGroup.add(m);
   }
-  requestAnimationFrame(drawStars);
-}
-drawStars();
+  scene.add(nebGroup);
 
-// ---------- AI orb canvas visual ----------
-const orbCanvas = document.getElementById('orbCanvas');
-const orbCtx = orbCanvas.getContext('2d');
-function resizeOrb(){ orbCanvas.width = orbCanvas.clientWidth; orbCanvas.height = orbCanvas.clientHeight; }
-resizeOrb(); window.addEventListener('resize', resizeOrb);
+  // central energy core (glowing sphere with wobble)
+  const coreGeo = new THREE.SphereGeometry(1.1, 64, 64);
+  const coreMat = new THREE.MeshStandardMaterial({ color:0x00e8ff, emissive:0x003355, emissiveIntensity:2.8, metalness:0.3, roughness:0.2, transparent:true });
+  const core = new THREE.Mesh(coreGeo, coreMat);
+  scene.add(core);
 
-let orbAngle = 0;
-function drawOrb(){
-  orbCtx.clearRect(0,0,orbCanvas.width,orbCanvas.height);
-  const cx = orbCanvas.width/2, cy = orbCanvas.height/2;
-  // rotating glow rings
-  for(let i=0;i<5;i++){
-    orbCtx.beginPath();
-    orbCtx.strokeStyle = rgba(${i*40+20},${150+i*20},255,${0.06 + i*0.02});
-    orbCtx.lineWidth = 2 + i*1;
-    orbCtx.arc(cx, cy, 30 + i*12, orbAngle*0.2 + i, orbAngle*0.2 + i + 1.8);
-    orbCtx.stroke();
+  // holographic shell
+  const shell = new THREE.Mesh(new THREE.SphereGeometry(1.4,32,32), new THREE.MeshBasicMaterial({ color:0xb46bff, wireframe:true, opacity:0.18, transparent:true }));
+  scene.add(shell);
+
+  // star cloud (points)
+  const starCount = 2500;
+  const pos = new Float32Array(starCount*3);
+  for(let i=0;i<pos.length;i++){ pos[i] = (Math.random()-0.5)*80 }
+  const starsGeo = new THREE.BufferGeometry(); starsGeo.setAttribute('position', new THREE.BufferAttribute(pos,3));
+  const starsMat = new THREE.PointsMaterial({ color:0x00f0ff, size:0.02, transparent:true, opacity:0.85 });
+  const stars = new THREE.Points(starsGeo, starsMat);
+  scene.add(stars);
+
+  // lights
+  const p1 = new THREE.PointLight(0x00f0ff, 1.8, 200); p1.position.set(6,3,6); scene.add(p1);
+  const p2 = new THREE.PointLight(0xb46bff, 1.2, 120); p2.position.set(-4,-3,6); scene.add(p2);
+
+  // mouse parallax
+  let mx=0,my=0;
+  document.addEventListener('mousemove', (e)=>{ mx = (e.clientX/window.innerWidth)*2-1; my = (e.clientY/window.innerHeight)*2-1; });
+
+  // resize
+  window.addEventListener('resize', ()=>{ renderer.setSize(container.clientWidth, container.clientHeight); camera.aspect = container.clientWidth/container.clientHeight; camera.updateProjectionMatrix(); });
+
+  // animate
+  let time = 0;
+  function animate(){
+    requestAnimationFrame(animate);
+    time += 0.005;
+    core.rotation.y += 0.01; core.scale.setScalar(1 + Math.sin(time*2)*0.03);
+    shell.rotation.x += 0.003; shell.rotation.y += 0.004;
+    stars.rotation.y += 0.0008;
+    nebGroup.children.forEach((ch, idx)=>{ ch.rotation.z += 0.0005 * (idx+1); ch.position.x = Math.sin(time*0.05*(idx+1))*0.3; });
+    camera.position.x += (mx*0.6 - camera.position.x)*0.04;
+    camera.position.y += (-my*0.35 - camera.position.y)*0.04;
+    renderer.render(scene, camera);
   }
-  // particles
-  for(let p=0;p<10;p++){
-    const angle = orbAngle*0.1 + p;
-    const x = cx + Math.cos(angle*1.7+p)* (36 + p*2);
-    const y = cy + Math.sin(angle*1.3+p)* (30 + p*2);
-    orbCtx.beginPath();
-    orbCtx.fillStyle = rgba(0,240,255,${0.06 + p*0.03});
-    orbCtx.arc(x,y,2 + p*0.6,0,Math.PI*2);
-    orbCtx.fill();
+  animate();
+})();
+
+/* ---------- Starfield + occasional meteors (DOM) ---------- */
+(function starfield(){
+  const canvas = document.createElement('canvas'); canvas.id='sf'; canvas.style.position='absolute'; canvas.style.inset='0'; canvas.style.zIndex='2'; canvas.style.pointerEvents='none';
+  document.body.appendChild(canvas);
+  const ctx = canvas.getContext('2d');
+  function resize(){ canvas.width = innerWidth; canvas.height = innerHeight; }
+  window.addEventListener('resize', resize); resize();
+  const stars = [];
+  for(let i=0;i<300;i++){ stars.push({x:Math.random()*canvas.width, y:Math.random()*canvas.height, r: Math.random()*1.2, v:0.1+Math.random()*0.6}) }
+  function draw(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    for(const s of stars){ ctx.beginPath(); ctx.fillStyle = rgba(255,255,255,${0.06 + s.r*0.5}); ctx.arc(s.x,s.y,s.r,0,Math.PI*2); ctx.fill(); s.x -= s.v; if(s.x < -10) { s.x = canvas.width + 10; s.y = Math.random()*canvas.height } }
+    requestAnimationFrame(draw);
   }
-  orbAngle += 0.06;
-  requestAnimationFrame(drawOrb);
-}
-drawOrb();
+  draw();
+  // meteors
+  setInterval(()=> {
+    const m = document.createElement('div'); m.className='meteor'; m.style.position='fixed'; m.style.zIndex=999; m.style.pointerEvents='none';
+    const left = Math.random()*90 + '%'; m.style.left = left; m.style.top = '-10%'; m.style.width='2px'; m.style.height='100px';
+    m.style.background='linear-gradient(180deg, rgba(255,255,255,0.9), rgba(0,240,255,0.0))'; m.style.transform = rotate(${25+Math.random()*60}deg);
+    document.body.appendChild(m);
+    const dur = 1000 + Math.random()*1400;
+    m.animate([{transform: m.style.transform, top:'-10%'},{transform: m.style.transform, top:'110%'}], {duration:dur, easing:'linear'});
+    setTimeout(()=> m.remove(), dur+50);
+  }, 3500);
+})();
 
-// ---------- speed simulation & chart ----------
-const speedVal = document.getElementById('speedValue');
-const pingVal = document.getElementById('pingValue');
-const chartCanvas = document.getElementById('speedChart');
-const chartCtx = chartCanvas.getContext('2d');
-let speed = 100, ping = 24; let chartData = new Array(30).fill(speed);
+/* ---------- Visitors Globe (mini simulated) ---------- */
+(function visitorsMini(){
+  const vwrap = document.createElement('div'); vwrap.style.position='fixed'; vwrap.style.right='20px'; vwrap.style.bottom='120px'; vwrap.style.zIndex=60; vwrap.style.pointerEvents='none';
+  vwrap.innerHTML = <canvas id="visCanvas" width="160" height="120" style="width:160px;height:120px;border-radius:8px;filter:drop-shadow(0 8px 20px rgba(0,0,0,0.6));"></canvas>;
+  document.body.appendChild(vwrap);
+  const c = document.getElementById('visCanvas'), ctx = c.getContext('2d');
+  function draw(){ ctx.clearRect(0,0,c.width,c.height); ctx.beginPath(); ctx.arc(80,60,38,0,Math.PI*2); ctx.fillStyle='rgba(0,240,255,0.03)'; ctx.fill();
+    const now = Date.now(); for(let i=0;i<6;i++){ const a = (now/1000 + i) * (0.6 + i*0.2); const x = 80 + Math.cos(a)(28 - i*3); const y = 60 + Math.sin(a)(16 + i*2); ctx.beginPath(); ctx.fillStyle = rgba(0,240,255,${0.22 + (i%2)*0.24}); ctx.arc(x,y,2.8,0,Math.PI*2); ctx.fill(); } requestAnimationFrame(draw); }
+  draw();
+})();
 
-function updateSim(){
-  // gentle random walk
-  speed += (Math.random()-0.5) * 40;
-  speed = Math.max(50, Math.min(1200, speed));
-  ping += (Math.random()-0.5)*6; ping = Math.max(6, Math.min(200,ping));
-  speedVal.textContent = Math.round(speed);
-  pingVal.textContent = Math.round(ping);
-  chartData.push(speed); if(chartData.length>60) chartData.shift();
-  drawChart();
-}
-setInterval(updateSim, 900);
+/* ---------- DeepMind AI mock (voice + text) ---------- */
+const aiReply = $('#aiReply'); const aiInput = $('#aiInput'); const aiStatus = $('#aiStatus');
+$('#askBtn')?.addEventListener('click', processQuery);
+document.getElementById('micBtn')?.addEventListener('click', startVoiceRecognition);
 
-// draw small line chart
-function drawChart(){
-  const w = chartCanvas.width, h = chartCanvas.height;
-  chartCtx.clearRect(0,0,w,h);
-  // gradient fill
-  const grad = chartCtx.createLinearGradient(0,0,0,h);
-  grad.addColorStop(0,'rgba(155,107,255,0.28)');
-  grad.addColorStop(1,'rgba(0,240,255,0.04)');
-  chartCtx.fillStyle = grad;
-  chartCtx.strokeStyle = 'rgba(255,255,255,0.85)';
-  chartCtx.lineWidth = 2;
-  chartCtx.beginPath();
-  for(let i=0;i<chartData.length;i++){
-    const x = (i/(chartData.length-1))*w;
-    const y = h - ((chartData[i]-50)/1150)*h;
-    if(i===0) chartCtx.moveTo(x,y); else chartCtx.lineTo(x,y);
-  }
-  chartCtx.stroke();
-  // fill under
-  chartCtx.lineTo(w,h); chartCtx.lineTo(0,h); chartCtx.closePath();
-  chartCtx.globalAlpha = 0.16; chartCtx.fill(); chartCtx.globalAlpha = 1;
-}
-
-// turbo boost spike
-function simulateSpike(){
-  speed += 400; ping = Math.max(4, ping-10);
-  document.getElementById('aiStatus').textContent = 'DeepMind: Turbo Activated';
-  setTimeout(()=> document.getElementById('aiStatus').textContent = 'DeepMind: Optimal', 3000);
-}
-
-// ---------- voice intro & speech -------------
-const voiceToggle = document.getElementById('voiceToggle');
-let voiceOn = false;
-voiceToggle.addEventListener('click', ()=> {
-  voiceOn = !voiceOn;
-  voiceToggle.textContent = voiceOn ? '🔊 Voice On' : '🔈 Voice';
-  if(voiceOn) voiceIntro();
-});
-
-// voice intro
-function voiceIntro(){
-  if(!('speechSynthesis' in window)) return;
-  const u = new SpeechSynthesisUtterance("Good day. Deep Wave Artificial Intelligence online. Your network is optimal.");
-  u.pitch = 1; u.rate = 1; u.lang = 'en-US';
-  speechSynthesis.cancel();
-  speechSynthesis.speak(u);
-}
-
-// ---------- basic interactions ----------
-function startLaunch(){
-  // quick UI pulse + message
-  document.querySelector('.headline').classList.add('pulse');
-  voiceIntro();
-  setTimeout(()=> alert("🚀 Deep Wave Launched — Simulated experience active."), 600);
-}
-function openPlans(){ location.href = '#plans' }
-function enquire(plan){ alert(Thank you — enquiry for: ${plan}. DeepWave team will contact you.) }
-
-// ---------- AI ask (text & mic) ----------
-const aiReply = document.getElementById('aiReply');
 function processQuery(){
-  const q = document.getElementById('aiInput').value.trim();
-  if(!q) { aiReply.textContent = "Try typing: 'Check my speed' or 'Recommend a plan'"; return; }
-  aiReply.textContent = "DeepMind is analyzing…";
+  const q = aiInput.value.trim();
+  if(!q){ aiReply.textContent = "Try: 'Check my speed' or 'Recommend a plan'."; return; }
+  aiReply.textContent = "DeepMind analyzing…";
+  aiStatus.textContent = "DeepMind: processing";
   setTimeout(()=> {
-    // simple rules
-    if(/speed/i.test(q)) {
-      aiReply.innerHTML = Current simulated speed: <strong>${Math.round(speed)} Mbps</strong> with ping ${Math.round(ping)} ms.;
-    } else if(/recommend|best|plan/i.test(q)) {
-      const rec = speed < 300 ? 'Wave Titan (500 Mbps) is recommended' : 'Wave Infinity (1 Gbps) is recommended';
-      aiReply.innerHTML = Recommendation: <strong>${rec}</strong>;
+    if(/speed|ping/i.test(q)){
+      aiReply.innerHTML = Simulated Speed: <strong>${Math.round(window.simSpeed||350)} Mbps</strong> • Ping: <strong>${Math.round(window.simPing||22)} ms</strong>;
+    } else if(/recommend|best|plan/i.test(q)){
+      const rec = (window.simSpeed||350) < 500 ? 'Wave Titan (500 Mbps)' : 'Wave Infinity (1 Gbps)';
+      aiReply.innerHTML = Recommendation: <strong>${rec}</strong> — AI Boost available;
+    } else if(/ar/i.test(q)){
+      aiReply.textContent = "AR Mock: open camera & follow on-screen guide.";
     } else {
-      aiReply.textContent = "DeepMind: I can check speed, recommend plans, or check coverage.";
+      aiReply.textContent = "DeepMind: I can check speed, recommend plans, or open AR mock.";
     }
+    aiStatus.textContent = "DeepMind: ready";
   }, 900);
 }
 
-// speech recognition if available
-const micBtn = document.getElementById('micBtn');
-if(window.webkitSpeechRecognition || window.SpeechRecognition){
-  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  const recog = new SR(); recog.lang = 'en-US'; recog.interimResults = false;
-  micBtn.style.display = 'inline-block';
-  micBtn.addEventListener('click', ()=> {
-    recog.start();
-    aiReply.textContent = 'Listening…';
-  });
-  recog.onresult = (ev)=> {
-    const t = ev.results[0][0].transcript;
-    document.getElementById('aiInput').value = t;
-    processQuery();
-  };
-  recog.onerror = ()=> { aiReply.textContent = 'Microphone not accessible.' }
-} else {
-  micBtn.style.display = 'none';
+/* speech recognition (if available) */
+function startVoiceRecognition(){
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(!SpeechRecognition){ aiReply.textContent='Voice not supported in this browser.'; return; }
+  const r = new SpeechRecognition(); r.lang = 'en-US'; r.interimResults=false;
+  aiReply.textContent = 'Listening…';
+  r.start();
+  r.onresult = (e)=>{ const t = e.results[0][0].transcript; aiInput.value = t; processQuery(); }
+  r.onerror = ()=> { aiReply.textContent = 'Microphone not accessible.' }
 }
 
-// ---------- theme toggle (dark <-> light quick) ----------
-let dark = true;
-function toggleTheme(){
-  if(dark){
-    document.documentElement.style.setProperty('--bg1','#f6f8ff');
-    document.documentElement.style.setProperty('--bg2','#e9eefb');
-    document.documentElement.style.setProperty('--accent1','#005bff');
-    document.documentElement.style.setProperty('--accent2','#7a3bff');
-    document.body.style.color = '#041027';
-    dark = false;
-  } else {
-    document.documentElement.style.setProperty('--bg1','#030218');
-    document.documentElement.style.setProperty('--bg2','#08102a');
-    document.documentElement.style.setProperty('--accent1','#00f0ff');
-    document.documentElement.style.setProperty('--accent2','#9b6bff');
-    document.body.style.color = '#eaf6ff';
-    dark = true;
-  }
-}
+/* voice intro toggle */
+let voiceOn=false;
+$('#voiceToggle')?.addEventListener('click', ()=>{
+  voiceOn = !voiceOn; $('#voiceToggle').textContent = voiceOn? '🔊 Voice On' : '🔈 Voice';
+  if(voiceOn) speakText("Welcome to Deep Wave Multiverse. DeepMind online.");
+});
+function speakText(txt){ if(!('speechSynthesis' in window)) return; const u = new SpeechSynthesisUtterance(txt); u.lang='en-US'; u.rate=1; u.pitch=1; speechSynthesis.speak(u); }
 
-// ---------- simple star-meteor occasional -----------
+/* ---------- Simulated speed & ping engine ---------- */
+window.simSpeed = 400; window.simPing = 18;
 setInterval(()=> {
-  // create meteor streak (visual only)
-  const m = document.createElement('div');
-  m.style.position='fixed'; m.style.zIndex=50; m.style.pointerEvents='none';
-  m.style.width='2px'; m.style.height='80px'; m.style.background = 'linear-gradient(180deg, rgba(255,255,255,0.8), rgba(0,240,255,0.0))';
-  m.style.left = Math.random()*100 + '%'; m.style.top = '-10%';
-  m.style.transform = rotate(${20 + Math.random()*60}deg);
-  m.style.opacity = 0.9;
-  document.body.appendChild(m);
-  const dur = 1000 + Math.random()*1400;
-  m.animate([{transform: m.style.transform, top: '-10%'},{transform: m.style.transform, top: '110%'}], {duration:dur, easing:'linear'});
-  setTimeout(()=> m.remove(), dur+50);
-}, 4000);
+  window.simSpeed += (Math.random()-0.5)*60; window.simSpeed = Math.max(80, Math.min(2000, window.simSpeed));
+  window.simPing += (Math.random()-0.5)*4; window.simPing = Math.max(4, Math.min(240, window.simPing));
+  $('#speedVal').textContent = Math.round(window.simSpeed); $('#pingVal').textContent = Math.round(window.simPing);
+}, 900);
+
+/* ---------- Theme presets (galaxy/dawn/nebula) ---------- */
+const themeBtn = $('#themeBtn');
+const themes = ['galaxy','dawn','nebula']; let th = 0;
+themeBtn?.addEventListener('click', ()=> {
+  th = (th+1)%themes.length; document.documentElement.setAttribute('data-theme', themes[th]);
+  // quick palette tweak (simple)
+  if(themes[th]==='dawn'){ document.body.style.background = 'linear-gradient(180deg,#fff9f0,#e9eefb)'; document.body.style.color='#041027'; } else { document.body.style.background='linear-gradient(180deg,var(--bg1),var(--bg2))'; document.body.style.color=''; }
+});
+
+/* ---------- AR Mock (camera overlay) ---------- */
+$('#arBtn')?.addEventListener('click', async ()=>{
+  if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){ alert('Camera not supported'); return; }
+  const vwrap = document.createElement('div'); vwrap.className='overlay'; document.body.appendChild(vwrap);
+  vwrap.innerHTML = <video id="camvid" autoplay playsinline style="width:100%;height:100%;object-fit:cover;border-radius:12px"></video><button class="btn outline" id="closeCam" style="position:absolute;top:18px;right:18px;z-index:999">Close AR</button>;
+  const vid = document.getElementById('camvid');
+  try{ const stream = await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}}); vid.srcObject = stream; }
+  catch(e){ alert('Camera access denied'); vwrap.remove(); return; }
+  // overlay hologram
+  const holo = document.createElement('div'); holo.style.position='absolute'; holo.style.left='50%'; holo.style.top='30%'; holo.style.transform='translateX(-50%)'; holo.style.zIndex=999; holo.innerHTML = <div style="padding:12px 18px;background:rgba(0,0,0,0.3);border-radius:12px;border:1px solid rgba(255,255,255,0.06);backdrop-filter:blur(8px)">🔮 Deep Wave Hologram (Mock)</div>; vwrap.appendChild(holo);
+  $('#closeCam')?.addEventListener('click', ()=>{ const tracks = vid.srcObject?.getTracks()||[]; tracks.forEach(t=>t.stop()); vwrap.remove(); });
+});
+
+/* ---------- Spin & Win ---------- */
+function startSpin(){ $('#spinModal').classList.remove('hidden'); drawSpinWheel(); }
+function closeSpin(){ $('#spinModal').classList.add('hidden'); $('#spinResult').textContent=''; }
+function drawSpinWheel(){
+  const canvas = document.getElementById('spinCanvas'); if(!canvas) return; const ctx = canvas.getContext('2d');
+  const prizes = ['₹100 OFF','Extra 50GB','Free Router','AI Boost','10% OFF','Free Install','₹50 OFF','Surprise'];
+  const len = prizes.length; const cx=160,cy=160,r=140;
+  // draw slices
+  for(let i=0;i<len;i++){
+    const a0 = (i/len)*Math.PI*2; const a1 = ((i+1)/len)*Math.PI*2;
+    ctx.beginPath(); ctx.moveTo(cx,cy); ctx.arc(cx,cy,r,a0,a1); ctx.closePath();
+    ctx.fillStyle = i%2? 'rgba(0,240,255,0.08)' : 'rgba(155,107,255,0.06)'; ctx.fill();
+    ctx.save(); ctx.translate(cx,cy); ctx.rotate((a0+a1)/2); ctx.fillStyle='#fff'; ctx.fillText(prizes[i], r*0.6, 6); ctx.restore();
+  }
+  // spin logic
+  $('#spinBtn').onclick = ()=> {
+    $('#spinResult').textContent = 'Spinning…';
+    let rot = 0; const target = Math.random()*Math.PI*2 + 6*Math.PI;
+    const start = performance.now();
+    function anim(now){
+      const t = (now-start)/2000; const ease = (--t)*t*t+1; const cur = ease*target;
+      canvas.style.transform = rotate(${cur}rad);
+      if(now-start < 2200) requestAnimationFrame(anim); else {
+        const final = (target%(Math.PI*2)); const idx = Math.floor((len - (final/(Math.PI*2))*len)%len); $('#spinResult').textContent = You won: ${prizes[idx]}; 
+      }
+    }
+    requestAnimationFrame(anim);
+  };
+}
+
+/* ---------- Speed Test simulator (fake but smooth) ---------- */
+$('#runSpeed')?.addEventListener('click', ()=> {
+  $('#aiReply').textContent = 'Running simulated speed test…';
+  const res = {down:0, up:0, ping:0}; let step=0;
+  const iv = setInterval(()=> {
+    step++; res.down = Math.round(Math.min(2000, step*(30+Math.random()80))); res.up = Math.round(res.down(0.2+Math.random()*0.6)); res.ping = Math.round(Math.max(3, 60 - step*1.5 + Math.random()*8));
+    $('#aiReply').innerHTML = Speed: <strong>${res.down} Mbps</strong> • Ping: <strong>${res.ping} ms</strong>;
+    if(step>25){ clearInterval(iv); $('#aiReply').innerHTML += '<br><em>Test complete — results are simulated.</em>'; }
+  }, 180);
+});
+
+/* ---------- Globe show (full-screen simulation) ---------- */
+$('#globeBtn')?.addEventListener('click', ()=> {
+  alert('Visitors Globe simulated in the hero corner. Full globe requires advanced Three.js setup; contact for pro integration.');
+});
+
+/* ---------- Portal entrance (visual) ---------- */
+function openPortal(){
+  speakText('Opening DeepVerse portal'); document.body.classList.add('portal');
+  setTimeout(()=> { alert('Welcome to DeepVerse — simulated portal entrance.'); document.body.classList.remove('portal'); }, 900);
+}
+
+/* ---------- Enquiry & contact ---------- */
+function enquire(plan){ alert(Thanks! Enquiry received for ${plan}. We will contact you.); }
+function submitContact(e){ e.preventDefault(); alert('Thank you — message received.'); e.target.reset(); }
+
+/* ---------- Tour (simple) ---------- */
+function startTour(){
+  const steps = [
+    'This is the 11D holographic hero.',
+    'AI Hub: Ask DeepMind for recommendations.',
+    'Tools: Try AR Mock and Speed Test.',
+    'Spin the Galaxy Wheel for rewards.'
+  ];
+  let s=0; (function step(){ if(s>=steps.length) { alert('Tour finished — enjoy Deep Wave!'); return; } alert(steps[s]); s++; setTimeout(step,400); })();
+}
+
+/* ---------- simple keyboard voice nav ---------- */
+document.addEventListener('keydown', (e)=> {
+  if(e.key === 'p') location.href='#plans';
+  if(e.key === 'v') { voiceOn = !voiceOn; if(voiceOn) speakText('Voice enabled'); }
+});
+
+/* ---------- End of script ---------- */
