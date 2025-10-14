@@ -1,151 +1,203 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: 'Outfit', sans-serif;
+  font-family: "Poppins", sans-serif;
+  scroll-behavior: smooth;
 }
 
 body {
-  background: radial-gradient(circle at top, #0ea5e9, #1e1b4b 70%);
+  background: #000010;
+  color: #fff;
   overflow-x: hidden;
-  color: #e2e8f0;
 }
 
-/* Animated wave background */
-canvas {
+/* Navbar */
+.navbar {
   position: fixed;
   top: 0;
-  left: 0;
-  z-index: -1;
-}
-
-header {
-  position: fixed;
   width: 100%;
+  background: rgba(0, 0, 30, 0.8);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px 8%;
-  background: rgba(15, 23, 42, 0.5);
-  backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 15px 60px;
+  backdrop-filter: blur(10px);
   z-index: 1000;
 }
-
 .logo {
-  font-size: 2rem;
-  font-weight: 700;
-  color: #38bdf8;
-  text-shadow: 0 0 10px #38bdf8;
-  animation: glow 3s infinite alternate;
+  font-size: 1.6rem;
+  background: linear-gradient(90deg, #00eaff, #0077ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
-
-@keyframes glow {
-  from { text-shadow: 0 0 10px #38bdf8, 0 0 20px #38bdf8; }
-  to { text-shadow: 0 0 25px #a855f7, 0 0 50px #a855f7; }
-}
-
-nav a {
-  color: #cbd5e1;
+.navbar a {
+  margin-left: 25px;
+  color: #bbb;
   text-decoration: none;
-  margin: 0 15px;
-  font-weight: 500;
-  transition: .3s;
+  transition: 0.3s;
 }
-nav a:hover { color: #38bdf8; }
+.navbar a:hover {
+  color: #0ff;
+}
 
-/* Hero section */
+/* Animated Gradient Hero Background */
+.animated-bg {
+  position: absolute;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(45deg, #001f3f, #0055ff, #00eaff, #000000);
+  background-size: 400% 400%;
+  animation: bgMove 12s ease infinite;
+  top: -50%;
+  left: -50%;
+  filter: blur(80px);
+  z-index: 0;
+}
+@keyframes bgMove {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Hero Section */
 .hero {
-  min-height: 100vh;
+  height: 100vh;
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
   flex-direction: column;
   text-align: center;
-  padding: 0 10%;
   position: relative;
+  overflow: hidden;
 }
-
-.hero h1 {
-  font-size: 3.5rem;
-  color: #fff;
-  animation: fadeIn 2s ease-out forwards;
+.hero-content {
+  z-index: 2;
+  animation: fadeInUp 1.5s ease;
 }
-.hero p {
-  margin-top: 15px;
-  max-width: 600px;
-  color: #cbd5e1;
-  font-size: 1.2rem;
-  animation: fadeIn 3s ease-out forwards;
+.hero-content h2 {
+  font-size: 2.2rem;
+  margin-bottom: 10px;
 }
-@keyframes fadeIn {
-  from {opacity: 0; transform: translateY(30px);}
-  to {opacity: 1; transform: translateY(0);}
+.hero-content span {
+  color: #00eaff;
 }
-
+.hero-content p {
+  font-size: 1.1rem;
+  margin-bottom: 20px;
+  color: #ccc;
+}
 .btn {
-  margin-top: 30px;
-  background: linear-gradient(90deg, #38bdf8, #a855f7);
+  display: inline-block;
+  background: linear-gradient(90deg, #00eaff, #0077ff);
+  padding: 12px 28px;
+  border-radius: 50px;
   color: #fff;
-  padding: 14px 30px;
-  border-radius: 10px;
   text-decoration: none;
   font-weight: 600;
-  box-shadow: 0 0 25px rgba(56, 189, 248, 0.4);
-  transition: .4s;
+  transition: 0.3s;
 }
 .btn:hover {
   transform: scale(1.05);
-  box-shadow: 0 0 40px rgba(168, 85, 247, 0.6);
+  box-shadow: 0 0 20px #00eaff;
 }
 
-/* Section design */
-section {
-  padding: 100px 10%;
-  text-align: center;
+/* Wave Background */
+.wave-bg {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 200%;
+  height: 120px;
+  background: rgba(0, 238, 255, 0.2);
+  border-radius: 100% 50%;
+  animation: waveMove 8s linear infinite;
+}
+@keyframes waveMove {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
 }
 
-h2 {
-  font-size: 2rem;
-  color: #93c5fd;
-  margin-bottom: 40px;
-}
-
+/* Plans Section */
 .plans {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 30px;
-}
-
-.card {
-  background: rgba(255,255,255,0.08);
-  backdrop-filter: blur(10px);
-  border-radius: 20px;
-  padding: 25px;
-  border: 1px solid rgba(255,255,255,0.2);
-  transition: 0.4s;
-}
-
-.card:hover {
-  transform: translateY(-10px);
-  border-color: #38bdf8;
-  box-shadow: 0 0 25px rgba(56,189,248,0.3);
-}
-
-.price {
-  color: #a7f3d0;
-  font-size: 1.8rem;
-  margin: 10px 0;
-}
-
-footer {
-  background: rgba(15,23,42,0.9);
-  padding: 30px 10px;
+  padding: 100px 40px;
+  background: radial-gradient(circle at center, #000010, #010d26);
   text-align: center;
-  color: #94a3b8;
-  border-top: 1px solid rgba(255,255,255,0.1);
+}
+.section-title {
+  font-size: 2.2rem;
+  margin-bottom: 40px;
+  color: #00eaff;
+  position: relative;
+}
+.section-title::after {
+  content: '';
+  display: block;
+  width: 60px;
+  height: 3px;
+  background: #00eaff;
+  margin: 10px auto 0;
+  border-radius: 3px;
+}
+.plan-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+  gap: 35px;
+}
+.plan-card {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(0, 238, 255, 0.1);
+  border-radius: 20px;
+  padding: 30px;
+  transition: 0.4s;
+  backdrop-filter: blur(15px);
+  box-shadow: 0 0 10px rgba(0, 238, 255, 0.1);
+  transform: translateY(40px);
+  opacity: 0;
+}
+.plan-card h3 {
+  color: #00eaff;
+  margin-bottom: 10px;
+}
+.plan-card .price {
+  font-size: 1.2rem;
+  color: #fff;
+  margin-bottom: 10px;
+}
+.plan-card ul {
+  list-style: none;
+  text-align: left;
+  color: #ccc;
+}
+.plan-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 25px #00eaff;
 }
 
-@media(max-width:768px){
-  .hero h1 { font-size: 2.5rem; }
+/* Contact */
+.contact {
+  background: #000018;
+  padding: 100px 20px;
+  text-align: center;
+}
+.contact p {
+  margin: 8px 0;
+  color: #ddd;
+}
+
+/* Footer */
+footer {
+  background: #000010;
+  text-align: center;
+  padding: 15px;
+  font-size: 0.9rem;
+  color: #777;
+}
+
+/* Animation */
+@keyframes fadeInUp {
+  from {opacity: 0; transform: translateY(20px);}
+  to {opacity: 1; transform: translateY(0);}
 }
