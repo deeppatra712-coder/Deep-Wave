@@ -1,55 +1,20 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>DEEP WAVE — OMNI GODMODE (Ultra Supreme)</title>
-  <meta name="description" content="Deep Wave — OMNI GODMODE: highest-tier immersive web experience (Three.js + audio-reactive shaders + AI-mock UI)" />
-  <link rel="stylesheet" href="style.css">
-  <!-- Three.js module -->
-  <script type="module" crossorigin src="https://cdn.jsdelivr.net/npm/three@0.153.0/build/three.module.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Deep Wave — Milky Way Hyper Warp 10.0</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div id="app">
-    <canvas id="gl"></canvas>
+  <canvas id="galaxy"></canvas>
 
-    <!-- UI overlay -->
-    <div class="ui top-left">
-      <div class="brand">🌌 <strong>DEEP WAVE</strong> <span>OMNI-GODMODE</span></div>
-      <div class="controls">
-        <button id="micBtn" class="chip">🎤 Mic</button>
-        <button id="musicBtn" class="chip">🔊 Music</button>
-        <button id="warpBtn" class="chip">✨ Warp</button>
-        <button id="xrBtn" class="chip">🕶 XR</button>
-        <select id="themeSelect" class="chip">
-          <option value="galaxy">Galaxy</option>
-          <option value="void">Void</option>
-          <option value="dawn">Dawn</option>
-        </select>
-      </div>
-    </div>
-
-    <div class="ui top-right meter" id="meter">
-      <div>Speed: <span id="speedVal">—</span> Mbps</div>
-      <div>Ping: <span id="pingVal">—</span> ms</div>
-    </div>
-
-    <div class="ui bottom-left note">Tip: Click to supernova • Double-click to reform logo • Press <kbd>P</kbd> for Plans</div>
-
-    <!-- Hidden admin / debug panel -->
-    <div id="adminPanel" class="admin hidden">
-      <div class="admin-header">ADMIN • COSMIC</div>
-      <div class="admin-body">
-        <label>Particle Count <input id="particleCount" type="range" min="100" max="3000" value="600"></label>
-        <label>Audio Sensitivity <input id="audioGain" type="range" min="0" max="3" step="0.01" value="1.0"></label>
-        <button id="resetBtn" class="small">Reset Visuals</button>
-      </div>
-    </div>
-
-    <!-- cursor trail container -->
-    <div id="trail" class="trail"></div>
+  <div class="center">
+    <h1>🌌 Deep Wave — Milky Way Hyper Warp 10.0</h1>
+    <p>“Beyond Time • Beyond Universe • Beyond Speed”</p>
   </div>
 
-  <script type="module" src="script.js"></script>
+  <audio id="bg-music" src="https://cdn.pixabay.com/audio/2022/03/15/audio_5fa9ec812f.mp3" loop></audio>
+  <script src="script.js"></script>
 </body>
 </html>
