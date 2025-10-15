@@ -1,46 +1,40 @@
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap');
-
-html,body {
-  margin:0; padding:0;
-  height:100%;
-  background:black;
-  overflow:hidden;
-  color:#fff;
-  font-family:'Orbitron',sans-serif;
+html, body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background: black;
+  color: white;
+  font-family: "Orbitron", sans-serif;
 }
-
-#universe {
-  position:fixed;
-  top:0; left:0;
-  width:100%; height:100%;
-  display:block;
+canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
 }
-
 .center {
-  position:absolute;
-  top:50%; left:50%;
-  transform:translate(-50%,-50%);
-  text-align:center;
-  z-index:2;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  z-index: 10;
+  transition: opacity 1.5s ease;
 }
-
-.logo {font-size:2em; letter-spacing:2px;}
-.creator {margin:10px 0; color:#00ffff;}
-.quote {font-style:italic; margin-bottom:20px; color:#ccc;}
+.logo { font-size: 1.6rem; margin-bottom: 0.5rem; }
+.creator { color: #00e0ff; }
+.shine { color: #ff33ff; text-shadow: 0 0 15px #ff33ff; }
 .enter {
-  background:linear-gradient(45deg,#0ff,#09f);
-  color:#000;
-  border:none;
-  padding:15px 30px;
-  border-radius:50px;
-  font-size:1em;
-  cursor:pointer;
-  box-shadow:0 0 20px #09f;
-  transition:all .3s;
+  margin-top: 20px;
+  background: linear-gradient(90deg, #00f, #f0f);
+  border: none;
+  padding: 12px 32px;
+  border-radius: 30px;
+  color: white;
+  cursor: pointer;
+  font-weight: bold;
+  box-shadow: 0 0 25px #0ff;
 }
-.enter:hover {transform:scale(1.1); box-shadow:0 0 40px #0ff;}
-.shine {color:#0ff; animation:shine 2s infinite alternate;}
-@keyframes shine {from{color:#0ff;}to{color:#fff;}}
-
-.fade-out {animation:fadeOut 2s forwards;}
-@keyframes fadeOut {to{opacity:0;}}
+.enter:hover { box-shadow: 0 0 35px #f0f; }
+.fadeOut { opacity: 0; }
