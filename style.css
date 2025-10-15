@@ -1,50 +1,65 @@
-/* DEEP WAVE — Ultra Supreme CSS */
-:root{
-  --bg-1:#020218; --bg-2:#050735;
-  --accent1:#00f0ff; --accent2:#b46bff;
-  --muted:rgba(220,240,255,0.8);
-  --glass: rgba(255,255,255,0.04);
+html, body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background: radial-gradient(circle at center, #000010 0%, #000 100%);
+  color: #fff;
+  font-family: 'Orbitron', sans-serif;
 }
-*{box-sizing:border-box}
-html,body,#app{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial}
-body{background:linear-gradient(180deg,var(--bg-1),var(--bg-2));overflow:hidden;color:#e8fbff}
 
-/* canvas stretches */
-canvas{display:block;width:100vw;height:100vh}
-
-/* UI overlay */
-.ui{position:fixed;z-index:60;display:flex;gap:10px;align-items:center}
-.top-left{left:18px;top:16px}
-.top-right{right:18px;top:16px}
-.bottom-left{left:18px;bottom:18px}
-
-.brand{padding:8px 12px;border-radius:10px;background:linear-gradient(90deg,rgba(0,240,255,0.06),rgba(180,107,255,0.04));border:1px solid rgba(255,255,255,0.04);font-weight:700;backdrop-filter:blur(6px)}
-.brand span{font-weight:600;color:var(--muted);font-size:0.9rem;margin-left:8px}
-
-.chip{
-  padding:8px 12px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);
-  background:transparent;color:var(--muted);cursor:pointer;font-weight:700;
-  backdrop-filter: blur(6px);
+canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
 }
-.chip:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(0,0,0,0.5)}
 
-.meter{padding:10px 14px;border-radius:12px;background:linear-gradient(180deg,rgba(0,0,0,0.28),rgba(255,255,255,0.02));border:1px solid rgba(255,255,255,0.02)}
+.center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  z-index: 10;
+  animation: fadeIn 2s ease-in-out;
+}
 
-.note{padding:8px 12px;border-radius:10px;background:rgba(0,0,0,0.25);font-size:0.95rem;color:rgba(230,250,255,0.85)}
+h1 {
+  font-size: 2.8rem;
+  color: #00f5ff;
+  text-shadow: 0 0 25px #00f5ff, 0 0 40px #b400ff;
+  cursor: pointer;
+  animation: pulse 2s infinite alternate;
+}
 
-/* trail elements */
-.trail{position:fixed;left:0;top:0;pointer-events:none;z-index:70}
+@keyframes pulse {
+  from { text-shadow: 0 0 10px #00f5ff; }
+  to { text-shadow: 0 0 40px #ff00ff; }
+}
 
-/* admin panel */
-.admin{position:fixed;right:18px;bottom:18px;width:320px;border-radius:12px;background:linear-gradient(180deg,rgba(0,0,0,0.6),rgba(10,10,20,0.6));border:1px solid rgba(255,255,255,0.04);color:var(--muted);z-index:80;padding:12px}
-.admin.hidden{display:none}
-.admin-header{font-weight:800;margin-bottom:8px}
-.admin-body label{display:flex;justify-content:space-between;align-items:center;margin:8px 0;font-size:0.9rem}
-.small{padding:6px 10px;border-radius:8px;border:0;background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#001;font-weight:800;cursor:pointer}
+p {
+  font-size: 1.2rem;
+  letter-spacing: 2px;
+  opacity: 0.85;
+  margin-top: 15px;
+}
 
-/* responsive tweaks */
-@media (max-width:800px){
-  .brand{font-size:0.9rem}
-  .meter{display:none}
-  .admin{width:90%}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translate(-50%, -60%); }
+  to { opacity: 1; transform: translate(-50%, -50%); }
+}
+
+.trail {
+  position: fixed;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  pointer-events: none;
+  background: radial-gradient(circle, #00e0ff 0%, transparent 80%);
+  opacity: 0.8;
+  animation: fade 0.6s linear forwards;
+  z-index: 9;
+}
+
+@keyframes fade {
+  to { opacity: 0; transform: scale(2); }
 }
