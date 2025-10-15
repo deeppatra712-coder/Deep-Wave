@@ -1,61 +1,46 @@
-@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap");
-*{margin:0;padding:0;box-sizing:border-box}
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap');
 
-body{
-  font-family:"Poppins",sans-serif;
-  color:#fff;
+html,body {
+  margin:0; padding:0;
+  height:100%;
+  background:black;
   overflow:hidden;
-  height:100vh;
-  background:#000;
+  color:#fff;
+  font-family:'Orbitron',sans-serif;
 }
 
-.center{
+#universe {
+  position:fixed;
+  top:0; left:0;
+  width:100%; height:100%;
+  display:block;
+}
+
+.center {
   position:absolute;
-  top:50%;
-  left:50%;
+  top:50%; left:50%;
   transform:translate(-50%,-50%);
   text-align:center;
-  z-index:10;
+  z-index:2;
 }
 
-.logo{
-  font-size:3.2rem;
-  background:linear-gradient(90deg,#00ffff,#ff00ff);
-  -webkit-background-clip:text;
-  -webkit-text-fill-color:transparent;
-  animation:glow 4s infinite alternate;
-}
-
-@keyframes glow{
-  0%{text-shadow:0 0 20px #00ffff;}
-  100%{text-shadow:0 0 40px #ff00ff;}
-}
-
-.creator{font-size:1.3rem;margin-top:5px;}
-.shine{color:#fff;text-shadow:0 0 20px #00ffff,0 0 40px #ff00ff;}
-
-.quote{font-size:1.1rem;margin-top:10px;opacity:0.8;}
-
-.enter{
-  margin-top:25px;
-  padding:15px 40px;
+.logo {font-size:2em; letter-spacing:2px;}
+.creator {margin:10px 0; color:#00ffff;}
+.quote {font-style:italic; margin-bottom:20px; color:#ccc;}
+.enter {
+  background:linear-gradient(45deg,#0ff,#09f);
+  color:#000;
   border:none;
-  border-radius:40px;
-  background:linear-gradient(90deg,#00ffe0,#ff00c3);
-  color:#fff;
-  font-size:1.1rem;
+  padding:15px 30px;
+  border-radius:50px;
+  font-size:1em;
   cursor:pointer;
-  box-shadow:0 0 20px #00ffff;
-  animation:pulse 2.5s infinite;
+  box-shadow:0 0 20px #09f;
+  transition:all .3s;
 }
-@keyframes pulse{
-  0%{transform:scale(1);box-shadow:0 0 20px #00ffff;}
-  50%{transform:scale(1.1);box-shadow:0 0 40px #ff00ff;}
-  100%{transform:scale(1);box-shadow:0 0 20px #00ffff;}
-}
+.enter:hover {transform:scale(1.1); box-shadow:0 0 40px #0ff;}
+.shine {color:#0ff; animation:shine 2s infinite alternate;}
+@keyframes shine {from{color:#0ff;}to{color:#fff;}}
 
-canvas#universe{
-  position:fixed;
-  inset:0;
-  z-index:0;
-}
+.fade-out {animation:fadeOut 2s forwards;}
+@keyframes fadeOut {to{opacity:0;}}
