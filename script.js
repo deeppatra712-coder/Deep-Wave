@@ -1,71 +1,55 @@
-// ===== SETUP =====
-const canvas = document.getElementById('galaxy');
-const ctx = canvas.getContext('2d');
-let w, h, stars = [], warpSpeed = 0.03;
-const audio = document.getElementById('bg-music');
+const canvas = document.getElementById("universe");
+const ctx = canvas.getContext("2d");
+canvas.width = innerWidth;
+canvas.height = innerHeight;
 
-function resize() {
-  w = canvas.width = window.innerWidth;
-  h = canvas.height = window.innerHeight;
+let particles = [];
+for (let i = 0; i < 600; i++) {
+  particles.push({
+    angle: Math.random() * 360,
+    radius: Math.random() * 600,
+    speed: 0.02 + Math.random() * 0.02,
+    size: Math.random() * 1.8,
+    color: hsl(${Math.random()*360},100%,70%)
+  });
 }
-window.addEventListener('resize', resize);
-resize();
 
-// ===== CREATE STARS =====
-function createStars(num = 800) {
-  stars = [];
-  for (let i = 0; i < num; i++) {
-    stars.push({
-      x: (Math.random() - 0.5) * w,
-      y: (Math.random() - 0.5) * h,
-      z: Math.random() * w
-    });
-  }
-}
-createStars();
+function animate() {
+  ctx.fillStyle = "rgba(0,0,20,0.3)";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-// ===== DRAW ANIMATION =====
-function draw() {
-  ctx.fillStyle = "rgba(0, 0, 10, 0.4)";
-  ctx.fillRect(0, 0, w, h);
+  const cx = canvas.width / 2;
+  const cy = canvas.height / 2;
 
-  for (let s of stars) {
-    s.z -= warpSpeed * w * 0.1;
-    if (s.z <= 0) s.z = w;
-    const k = 128 / s.z;
-    const px = s.x * k + w / 2;
-    const py = s.y * k + h / 2;
+  // black hole core
+  const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, 150);
+  grad.addColorStop(0, "rgba(0,0,0,1)");
+  grad.addColorStop(1, "rgba(0,0,0,0)");
+  ctx.fillStyle = grad;
+  ctx.beginPath();
+  ctx.arc(cx, cy, 150, 0, Math.PI * 2);
+  ctx.fill();
 
-    const size = (1 - s.z / w) * 2;
-    const hue = (s.z / w) * 360;
-    ctx.fillStyle = hsl(${hue}, 100%, 70%);
+  // orbiting particles
+  for (let p of particles) {
+    p.angle += p.speed;
+    let x = cx + Math.cos(p.angle) * p.radius;
+    let y = cy + Math.sin(p.angle) * p.radius;
     ctx.beginPath();
-    ctx.arc(px, py, size, 0, Math.PI * 2);
+    ctx.arc(x, y, p.size, 0, Math.PI * 2);
+    ctx.fillStyle = p.color;
     ctx.fill();
   }
 
-  requestAnimationFrame(draw);
+  requestAnimationFrame(animate);
 }
-draw();
+animate();
 
-// ===== CURSOR TRAIL =====
-document.addEventListener('mousemove', (e) => {
-  const t = document.createElement('div');
-  t.className = 'trail';
-  t.style.left = e.pageX + 'px';
-  t.style.top = e.pageY + 'px';
-  document.body.appendChild(t);
-  setTimeout(() => t.remove(), 600);
-});
+// --- Interactions ---
+const btn = document.getElementById("enterBtn");
+const bgm = document.getElementById("bgm");
 
-// ===== AUDIO + AI VOICE =====
-window.addEventListener('click', () => {
-  if (audio.paused) audio.play();
-
-  const voice = new SpeechSynthesisUtterance("Welcome to Deep Wave — The Universe of Connectivity");
-  voice.pitch = 1.1;
-  voice.rate = 0.9;
-  voice.volume = 1;
-  voice.lang = 'en-US';
-  speechSynthesis.speak(voice);
+btn.addEventListener("click", () => {
+  bgm.play();
+  alert("🌌 Deep Wave Universe XR 200.0 Activated — Enjoy the Black Hole Experience!");
 });
