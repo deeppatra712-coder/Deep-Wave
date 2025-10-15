@@ -1,30 +1,51 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Deep Wave XR ∞∞ | GODMODE Black Hole Edition</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Deep Wave Universe — Portal</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="universe">
-    <div class="blackhole"></div>
-    <div class="stars"></div>
-    <div class="warp"></div>
+  <!-- Preloader -->
+  <div id="preloader" aria-hidden="false">
+    <div class="loader">
+      <div class="ring"></div>
+      <div class="msg">Booting Deep Wave...</div>
+      <div id="prepercent">0%</div>
+    </div>
   </div>
 
-  <section class="center">
-    <h1 class="logo">🌀 Deep Wave XR ∞∞</h1>
-    <p class="creator">Created by <span class="shine">Deep Patra</span></p>
-    <p class="quote">“Where Gravity Becomes Art.”</p>
-    <button id="enterBtn" class="enter">Enter the Black Hole 🌌</button>
-  </section>
+  <!-- Main portal -->
+  <div class="portal" id="portal" aria-label="Deep Wave Portal" role="application">
+    <canvas id="starfield" aria-hidden="true"></canvas>
 
-  <audio id="bgm" 
-    src="https://cdn.pixabay.com/download/audio/2023/01/05/audio_1a5a1c3f9f.mp3?filename=futuristic-space-ambient-135251.mp3" 
-    loop>
-  </audio>
+    <div class="hud">
+      <button id="perfBtn" title="Toggle Performance Mode">⚡</button>
+      <button id="shareBtn" title="Share">🔗</button>
+      <button id="screenshotBtn" title="Save Snapshot">📷</button>
+      <label class="vol">
+        🔊<input id="vol" type="range" min="0" max="1" step="0.05" value="0.9">
+      </label>
+      <div id="fps" aria-hidden="true">FPS: --</div>
+    </div>
 
-  <script src="script.js"></script>
+    <div class="center-ui" id="centerUI">
+      <div id="warpMask" class="warp-mask" role="button" tabindex="0" aria-pressed="false" aria-label="Enter the Black Hole">
+        <div class="blackhole" id="blackhole" aria-hidden="false"></div>
+        <div class="enter-label">ENTER THE BLACK HOLE</div>
+      </div>
+      <div class="subtitle">Deep Wave Universe XR — Click to enter</div>
+    </div>
+
+    <!-- hidden fallback video for weak devices -->
+    <video id="fallbackVideo" loop muted playsinline preload="auto" class="fallback-video" aria-hidden="true" style="display:none;">
+      <source src="https://cdn.pixabay.com/videos/intro-2887.mp4" type="video/mp4">
+    </video>
+  </div>
+
+  <audio id="whoosh" preload="auto" src="https://assets.mixkit.co/sfx/download/mixkit-fast-rocket-whoosh-1714.wav"></audio>
+
+  <script src="script.js" defer></script>
 </body>
 </html>
